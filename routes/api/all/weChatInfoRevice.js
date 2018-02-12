@@ -10,5 +10,5 @@ module.exports = function (req, res, next) {
 	// });
 
 	console.log(req.allParams);
-	res.send('success');
+	res.send(req.allParams.echostr);
 };

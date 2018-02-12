@@ -1,0 +1,40 @@
+{
+  "name": "marketingCenter",
+  "version": "1.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "aes-js": "~2.0.0",
+    "ali-oss": "^4.11.4",
+    "async": "*",
+    "body-parser": "~1.15.1",
+    "buffer-split": "^1.0.0",
+    "co": "^4.6.0",
+    "cookie-parser": "~1.4.3",
+    "crc": "^3.5.0",
+    "crypto": "~0.0.3",
+    "debug": "~2.2.0",
+    "ejs": "~2.4.1",
+    "express": "~4.13.4",
+    "express-xml-bodyparser": "~0.3.0",
+    "fs": "~0.0.2",
+    "javascript-qrcode": "^1.0.7",
+    "jssha": "~2.2.0",
+    "lodash": "*",
+    "md5": "~2.1.0",
+    "moment": "^2.20.1",
+    "morgan": "~1.7.0",
+    "mysql": "~2.11.1",
+    "mysql-pool-crud": "^1.0.2",
+    "node-schedule": "~1.1.1",
+    "pixl-xml": "~1.0.7",
+    "qs": "^6.5.1",
+    "redis-connection-pool": "~1.5.0",
+    "redis-pool-fns": "^1.1.9",
+    "request": "^2.83.0",
+    "request_http": "^1.0.55",
+    "serve-favicon": "~2.3.0"
+  }
+}

@@ -3,7 +3,7 @@ var __config = require("../config/config");
 var redis = require('redis-pool-fns')(__config.redis);
 
 var saveAccessToken = function (accessToken) {
-	redis.set(`accessToken_${__config.wxa.appId}`, accessToken);
+	redis.set(`accessToken_${__config.wechat.appId}`, accessToken);
 };
 
 var getAccessToken = function () {
@@ -11,8 +11,8 @@ var getAccessToken = function () {
 		url: "https://api.weixin.qq.com/cgi-bin/token",
 		data: {
 			grant_type: "client_credential",
-			appid: __config.wxa.appId,
-			secret: __config.wxa.secret
+			appid: __config.wechat.appId,
+			secret: __config.wechat.secret
 		}
 	};
 
@@ -22,7 +22,7 @@ var getAccessToken = function () {
 			return;
 		}
 
-		console.log(`GEN ${__config.wxa.appId} ACCESS_TOKEN SUCCESS: ${accessTokenObj.access_token}`);
+		console.log(`GEN ${__config.wechat.appId} ACCESS_TOKEN SUCCESS: ${accessTokenObj.access_token}`);
 
 		saveAccessToken(accessTokenObj.access_token);
 		setTimeout(getAccessToken, accessTokenObj.expires_in * 0.8 * 1000);

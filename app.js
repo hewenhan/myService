@@ -9,6 +9,7 @@ var OSS = require('ali-oss');
 co = require('co');
 
 __config = require('./config/config');
+weChatLib = require('./lib/weChatLib');
 redis = require('redis-pool-fns')(__config.redis);
 require("mysql-pool-crud")(__config.mysql);
 common = require('./common/publicFunction');

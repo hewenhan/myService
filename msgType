@@ -1,0 +1,61 @@
+
+verify:
+
+{ signature: 'b56d0398e60e5267a8746e91bdd880158fa9a0ce',
+  echostr: '31860399654002407',
+  timestamp: '1518423265',
+  nonce: '3673689581' }
+
+
+follow discard:
+
+{ signature: '0b751de1331f4f94a980b029260580abbbcf66d1',
+  timestamp: '1518424041',
+  nonce: '141625811',
+  openid: 'oj-kewBhPkAf7H0ACPSQfOB8icFQ',
+  encrypt_type: 'aes',
+  msg_signature: '906a8014ac5b3c94387241b620d9425021d4635f',
+  xml: 
+   { tousername: [ 'gh_5767f12effd8' ],
+     fromusername: [ 'oj-kewBhPkAf7H0ACPSQfOB8icFQ' ],
+     createtime: [ '1518424041' ],
+     msgtype: [ 'event' ],
+     event: [ 'unsubscribe' ],
+     eventkey: [ '' ],
+     encrypt: [ 'bMF+MYPpfmXn+0vxHwD7D7oCy2Cj1htcGzaQoYE753T5s5TFf00hL3mt1ytjg9Uz5GTUdxlOxb9bKK1uEcfDq0xWkVXe5U5AKxQPhySCEpxv36fxLqSu7hb4T6B8LnH4a3d3lAtu/7iWGV4NJLWexmSc/7Cyr7nvlJFJNRuuV7hd/vl2U2UNFMUR2hc7LUB9nQ5NBZhmZ1OzSFvpU1CfA46zQXkDPYVA9Xs7ccmO5uwHOqHy9Ufra2UvUoEca6G3kibSliOxPGyMULyWQU6SGZP+acdSl7nKGeRdzcCdj3p6pZpVVIgAygVv/n/iy+DLsEIoJY3O4wLisKL5i5yPbxtupJP7UhjYzP8QpO3fn/Yt2sMaEIrgYSM4v8EEz5yuacJjwj+BFX58phZkhDJoKu0h6Wc/fI3VvHa6agiaNL4=' ] } }
+
+
+follow up:
+
+{ signature: 'a27587e8b601caed7c14a220be6419ecdd11b80d',
+  timestamp: '1518424122',
+  nonce: '1275588199',
+  openid: 'oj-kewBhPkAf7H0ACPSQfOB8icFQ',
+  encrypt_type: 'aes',
+  msg_signature: '10e6270a1da5efb63f7d63ba019f96e1d7d62962',
+  xml: 
+   { tousername: [ 'gh_5767f12effd8' ],
+     fromusername: [ 'oj-kewBhPkAf7H0ACPSQfOB8icFQ' ],
+     createtime: [ '1518424122' ],
+     msgtype: [ 'event' ],
+     event: [ 'subscribe' ],
+     eventkey: [ '' ],
+     encrypt: [ 'siVJypL3ILcKy61xyj9vjkTcPSEwDSXu8SafPEAIWMXJfONmBc6Q3zUZQSHb5/Ba4h3lntunAMNbcpE0xGSM/nrdMcAsSDqY/wHgMPjX86KNOlB//l4SU2j83gb33RrYYFS+3MI0ootwKQTTrZ3PEksWWP+Uzue4uObhyYoDa7NT7vwdp9deDHDksa6lBNsO+Rn9MqBEdfuo+fgzxq7Jabxnlg8XFaUoFUEygt591mWm1OZ4P2/L/KyMCbTiHK9nM6UcOoObenRsRodDE2Q1srWvpQ/gR66Lyet/5XwZOwNK2Tfa2bVlM7WOv8DaaDaJwxSO1IjnXfQb4LtDyQ+OYVmZ21Hldk6ljBLmdMwMzHB8LdQCDWUGQz11gSrL8nb2uaV58oBRhOiTXYBg1w8loZEBH7POqSTJAKvTeUflNNY=' ] } }
+
+
+send message:
+
+{ signature: 'f57cb1337820592040e287f37ff06e8339b2389d',
+  timestamp: '1518424194',
+  nonce: '282833819',
+  openid: 'oj-kewBhPkAf7H0ACPSQfOB8icFQ',
+  encrypt_type: 'aes',
+  msg_signature: 'b9097c38dab144089cba39d3fbdd73736df34bc3',
+  xml: 
+   { tousername: [ 'gh_5767f12effd8' ],
+     fromusername: [ 'oj-kewBhPkAf7H0ACPSQfOB8icFQ' ],
+     createtime: [ '1518424193' ],
+     msgtype: [ 'text' ],
+     content: [ '的黄金时间说' ],
+     msgid: [ '6521582250854103854' ],
+     encrypt: [ 'uwOVRoAFkBoQSBFUii3QFkh/yDiHiLY3N3tT712oUzZqX2excNFY8n+rVkk7iLSr25g5lnkoVzR4TDgpZz8iyyY+95JDBvuvz44WOMepJeJV8jFnzmgcSZo/Oo99KLTEAf5wWHRNVNXhgYJPF3GVrj9g7jz78saSHp39qwaSSf7gTVpCia5xQTdwuGnIzFhr9Y3R/ZVjOUlvIwLDXlHZAXLGOkQiIZh+OazwetwXQv0dRWU8X4wa+sSo97NET2o4PpV4Ybp3uNm/HGdnihrocpkchkFPKRe3N/CIlQS8jb5FfgnQG/bIk52ED8OPDWKhk6lxiH9xebOpB5XZ/Vr7k0E6pcAWncf/AVM8AhDdlxxg3Kye4ZTTDWGmX+LTpJYO4IQDSHdc0T/mZKP+Y1Jj7EDavFvuqDBR+sTe6ZgtkCtNsxQwWywP6SZ9Z9Z+5NXuHIz7f/xR2dpudBj3rupjLQ==' ] } }

@@ -41,32 +41,10 @@ var mobile = require('./routes/mobile');
 var api = require('./routes/api');
 
 app.use(function (req, res, next) {
-	if (req.headers.proxy_uri == null) {
-		__root = req.headers.host;
-	}
-
 	res.renderOrigin = res.render;
 	res.render = function (view, opt) {
 		res.renderOrigin(view, opt);
 	}
-
-	var weChatPatt = /MicroMessenger/i;
-	var aliPayPatt = /alipay/i;
-
-	var userAgent = req.headers["user-agent"];
-
-	if (weChatPatt.test(userAgent)) {
-		req.browser = 'weChat';
-	} else if (aliPayPatt.test(userAgent)) {
-		req.browser = 'aliPay';
-	} else {
-		req.browser = 'other';
-	}
-
-	if (req.headers['x-real-ip'] == null) {
-		req.headers['x-real-ip']  = req.ip.split(':')[3];
-	}
-
 	next();
 });
 

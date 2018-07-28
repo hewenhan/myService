@@ -1,5 +1,8 @@
+// ONLINE
+var apiHosts = 'https://service.hewenhan.me/api';
 
-var apiHosts = 'http://192.168.10.2:20070/api';
+// // TEST
+// var apiHosts = 'http://192.168.10.2:20070/api';
 
 var requestApi = (path, data, callback) => {
 	$.ajax({

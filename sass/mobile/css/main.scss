@@ -1,0 +1,140 @@
+
+$color-base: #ADD5F7;
+$color-deep1: #7FB2F0;
+$color-deep2: #4E7AC7;
+$color-deep3: #35478C;
+$color-deep4: #16193B;
+
+html{
+	font-size: 15px;
+	font-size: 4vw;
+}
+body{
+	position:relative;
+	font-family: "gotham_bookregular","Gotham Book","GothamBook","Helvetica Neue","Helvetica","Arial,sans-serif","Hiragino Sans GB","Microsoft YaHei";
+	margin: 0 auto;
+	max-width: 750px;
+	font-size: 1.2rem;
+	text-align: justify;
+	width: 100%;
+	overflow-x: hidden;
+	background-color: $color-base;
+	color: $color-deep3;
+}
+.content{
+	.text{
+		background-color: $color-deep1;
+		padding: 1rem 0;
+		display: block;
+		width: 80%;
+		text-align: center;
+		margin: 0 auto;
+	}
+}
+@media screen and (min-width: 750px){
+	html{
+		font-size: 30px;
+	}
+}
+img{
+	width: 100%;
+	display: block;
+}
+
+.head{
+	.menu{
+		width: 18rem;
+		height: 100%;
+		position: fixed;
+		background: $color-deep3;
+		color: $color-base;
+		box-shadow: 0 0 7px 0 rgba( 0, 0, 0, 0.75 );
+		display: none;
+		z-index: 10;
+		.menuCover{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			width: 25rem;
+			height: 1000rem;
+			background: rgba(0, 0, 0, 0.65);
+		}
+		.menuBody{
+			background: $color-deep3;
+			position: relative;
+			height: 100%;
+			top: 0px;
+		}
+		.menuItem{
+			border-top: 1px solid $color-deep2;
+			border-bottom: 1px solid $color-deep4;
+			font-size: 1.2rem;
+			height: 3rem;
+			line-height: 3rem;
+			text-align: center;
+		}
+		.userNameInMenu{
+			color: $color-base;
+			text-align: center;
+			height: 3rem;
+			line-height: 3rem;
+			font-size: 1.5rem;
+			overflow: hidden;
+		}
+		.menuHelpInfo {
+			color: $color-base;
+			text-align: center;
+			height: 3rem;
+			line-height: 3rem;
+			font-size: 1rem;
+			overflow: hidden;
+			position: absolute;
+			bottom: 0px;
+			width: 18rem;
+		}
+	}
+	.headBar{
+		.fixedStick{
+			background: $color-deep3;
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			text-align: center;
+			z-index: 20;
+			box-shadow: 0 0 7px 0 rgba( 0, 0, 0, 0.75 );
+			overflow: hidden;
+			max-width: 750px;
+			margin: 0 auto;
+			height: 3.8rem;
+			display: table-row;
+		}
+		.headerMenuHamburger{
+			width: 2rem;
+			height: 3.8rem;
+			display: table-cell;
+			vertical-align: middle;
+			padding-left: 1rem;
+			padding-right: 1rem;
+		}
+	}
+	.holder1{
+		height: 3.8rem;
+		width: 100%;
+	}
+}
+.content{
+	padding: 1rem;
+}
+.btn{
+	width: 8rem;
+	height: 3rem;
+	line-height: 3rem;
+	margin: 0 auto;
+	background-color: $color-deep2;
+	color: $color-base;
+	text-align: center;
+}
+.foot{
+
+}

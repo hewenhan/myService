@@ -28,6 +28,7 @@
     "morgan": "~1.7.0",
     "mysql": "~2.11.1",
     "mysql-pool-crud": "^1.0.2",
+    "node-sass-middleware": "^0.11.0",
     "node-schedule": "~1.1.1",
     "pixl-xml": "~1.0.7",
     "qs": "^6.5.1",

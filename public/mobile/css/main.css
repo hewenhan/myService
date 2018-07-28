@@ -1,0 +1,116 @@
+html {
+  font-size: 15px;
+  font-size: 4vw; }
+
+body {
+  position: relative;
+  font-family: "gotham_bookregular","Gotham Book","GothamBook","Helvetica Neue","Helvetica","Arial,sans-serif","Hiragino Sans GB","Microsoft YaHei";
+  margin: 0 auto;
+  max-width: 750px;
+  font-size: 1.2rem;
+  text-align: justify;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #ADD5F7;
+  color: #35478C; }
+
+.content .text {
+  background-color: #7FB2F0;
+  padding: 1rem 0;
+  display: block;
+  width: 80%;
+  text-align: center;
+  margin: 0 auto; }
+
+@media screen and (min-width: 750px) {
+  html {
+    font-size: 30px; } }
+
+img {
+  width: 100%;
+  display: block; }
+
+.head .menu {
+  width: 18rem;
+  height: 100%;
+  position: fixed;
+  background: #35478C;
+  color: #ADD5F7;
+  box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.75);
+  display: none;
+  z-index: 10; }
+  .head .menu .menuCover {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 25rem;
+    height: 1000rem;
+    background: rgba(0, 0, 0, 0.65); }
+  .head .menu .menuBody {
+    background: #35478C;
+    position: relative;
+    height: 100%;
+    top: 0px; }
+  .head .menu .menuItem {
+    border-top: 1px solid #4E7AC7;
+    border-bottom: 1px solid #16193B;
+    font-size: 1.2rem;
+    height: 3rem;
+    line-height: 3rem;
+    text-align: center; }
+  .head .menu .userNameInMenu {
+    color: #ADD5F7;
+    text-align: center;
+    height: 3rem;
+    line-height: 3rem;
+    font-size: 1.5rem;
+    overflow: hidden; }
+  .head .menu .menuHelpInfo {
+    color: #ADD5F7;
+    text-align: center;
+    height: 3rem;
+    line-height: 3rem;
+    font-size: 1rem;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0px;
+    width: 18rem; }
+
+.head .headBar .fixedStick {
+  background: #35478C;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 20;
+  box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.75);
+  overflow: hidden;
+  max-width: 750px;
+  margin: 0 auto;
+  height: 3.8rem;
+  display: table-row; }
+
+.head .headBar .headerMenuHamburger {
+  width: 2rem;
+  height: 3.8rem;
+  display: table-cell;
+  vertical-align: middle;
+  padding-left: 1rem;
+  padding-right: 1rem; }
+
+.head .holder1 {
+  height: 3.8rem;
+  width: 100%; }
+
+.content {
+  padding: 1rem; }
+
+.btn {
+  width: 8rem;
+  height: 3rem;
+  line-height: 3rem;
+  margin: 0 auto;
+  background-color: #4E7AC7;
+  color: #ADD5F7;
+  text-align: center; }

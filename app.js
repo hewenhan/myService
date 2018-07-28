@@ -5,7 +5,9 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var xmlParser = require('express-xml-bodyparser');
+var sassMiddleware = require('node-sass-middleware');
 var OSS = require('ali-oss');
+fs = require('fs');
 co = require('co');
 
 __config = require('./config/config');
@@ -33,20 +35,19 @@ app.use(bodyParser.text({ extended: false }));
 app.use(bodyParser.raw({ extended: false }));
 app.use(xmlParser());
 app.use(cookieParser());
+app.use(sassMiddleware({
+    src: __dirname + '/sass',
+    response: false,
+    dest: __dirname + '/public',
+    debug: false,
+    outputStyle: 'extended'
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'ejs')));
 
 var pc = require('./routes/pc');
 var mobile = require('./routes/mobile');
 var api = require('./routes/api');
-
-app.use(function (req, res, next) {
-	res.renderOrigin = res.render;
-	res.render = function (view, opt) {
-		res.renderOrigin(view, opt);
-	}
-	next();
-});
 
 app.use('/pc', pc);
 app.use('/mobile', mobile);

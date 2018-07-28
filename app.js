@@ -29,8 +29,11 @@ app.set('view engine', 'ejs');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(function (req, res, next) {
-	console.log(req.headers);
-	res.header('Access-Control-Allow-Origin', '*');
+	for (var i = 0; i < __config.allowCrossOriginArr.length; i++) {
+		if (req.headers.origin === __config.allowCrossOriginArr[i]) {
+			res.header('Access-Control-Allow-Origin', req.headers.origin);
+		}
+	}
 	next();
 });
 app.use(logger('dev'));
@@ -41,11 +44,11 @@ app.use(bodyParser.raw({ extended: false }));
 app.use(xmlParser());
 app.use(cookieParser());
 app.use(sassMiddleware({
-    src: __dirname + '/sass',
-    response: false,
-    dest: __dirname + '/public',
-    debug: false,
-    outputStyle: 'extended'
+	src: __dirname + '/sass',
+	response: false,
+	dest: __dirname + '/public',
+	debug: false,
+	outputStyle: 'extended'
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'ejs')));

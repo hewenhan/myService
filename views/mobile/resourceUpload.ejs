@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title><%= title %></title>
+	<%- globalHtmlHeadTag %>
+	<link rel="stylesheet" href="/jqueryFileUpload/css/jquery.fileupload.css">
+	<link rel='stylesheet' href='css/resourceUpload.css' />
+
+	<script type="text/javascript" src="/jqueryFileUpload/js/vendor/jquery.ui.widget.js"></script>
+	<script type="text/javascript" src="/jqueryFileUpload/js/load-image.all.min.js"></script>
+	<script type="text/javascript" src="/jqueryFileUpload/js/jquery.iframe-transport.js"></script>
+	<script type="text/javascript" src="/jqueryFileUpload/js/jquery.fileupload.js"></script>
+	<script type="text/javascript" src="/jqueryFileUpload/js/jquery.fileupload-process.js"></script>
+	<script type="text/javascript" src="/jqueryFileUpload/js/jquery.fileupload-image.js"></script>
+	<script type="text/javascript" src="/jqueryFileUpload/js/jquery.fileupload-audio.js"></script>
+	<script type="text/javascript" src="/jqueryFileUpload/js/jquery.fileupload-video.js"></script>
+	<script type="text/javascript" src="/jqueryFileUpload/js/jquery.fileupload-validate.js"></script>
+	<script type="text/javascript" src="js/resourceUpload.js"></script>
+</head>
+<body>
+	<%- globalHtmlBodyHeadTag %>
+	<div class="content"> 
+<!-- 		<div class="inputGroup">
+			<div class="lable leftFloat"></div>
+			<div class="inputDom leftFloat">
+				<input id="fileInput" type="file" />
+			</div>
+		</div>
+		<div id="uploadBtn" class="btn">点击上传</div> -->
+
+		<!-- The fileinput-button span is used to style the file input field as button -->
+		<span class="btn btn-success fileinput-button">
+			<i class="glyphicon glyphicon-plus"></i>
+			<span>Add files...</span>
+			<!-- The file input field used as target for the file upload widget -->
+			<input id="fileupload" type="file" name="fileUpload" multiple>
+		</span>
+		<br>
+		<br>
+		<!-- The global progress bar -->
+		<div id="progressInfo" class="progressInfo">
+		</div>
+		<!-- The container for the uploaded files -->
+		<div id="files" class="files"></div>
+	</div>
+	<%- globalHtmlBodyFootTag %>
+</body>
+</html>

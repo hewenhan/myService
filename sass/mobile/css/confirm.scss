@@ -1,0 +1,90 @@
+$color-base: #ADD5F7;
+$color-deep1: #7FB2F0;
+$color-deep2: #4E7AC7;
+$color-deep3: #35478C;
+$color-deep4: #16193B;
+$color-title: #FFFFFF;
+
+.confirmDomShow{
+	display: flex !important;
+	z-index: 999;
+}
+.confirmDom{
+	position: fixed;
+	top: 0rem;
+	width: 100%;
+	max-width: 750px;
+	height: 100%;
+	margin: 0 auto;
+	justify-content:center;
+	align-items:center;
+	display: none;
+	.confirmDomCover{
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.75);
+		z-index: 5;
+	}
+	.confirmDomBody{
+		width: 85%;
+		z-index: 6;
+		background-color: $color-base;
+		color: $color-deep3;
+		box-shadow: 0 0 0.5rem $color-title;
+		position: relative;
+		.confirmDomBodyTitle{
+			margin-left: 1rem;
+			margin-right: 1rem;
+			margin-top: 1rem;
+			font-weight: bold;
+			text-align: center;
+			overflow: hidden;
+		}
+		.confirmDomBodySubTitle{
+			margin-left: 1rem;
+			margin-right: 1rem;
+			margin-bottom: 1rem;
+			font-size: 1rem;
+			color: $color-deep2;
+			font-style: italic;
+			text-align: center;
+			overflow: hidden;
+		}
+		.confirmDomBodyContent{
+			margin-left: 1rem;
+			margin-right: 1rem;
+			overflow: auto;
+			max-height: 25rem;
+			white-space: pre-wrap;
+			word-wrap: break-word;
+			margin-bottom: 2rem;
+		}
+		.confirmDomBodyBtn{
+			position: relative;
+			.confirmDomBtnGroup{
+				position: absolute;
+				top: -1.5rem;
+				right: 0.5rem;
+				display: flex;
+				justify-content:center;
+				align-items:center;
+				.confirmDomBodyConfirmBtn{
+					background-color: $color-deep3;
+					color: $color-title;
+					padding: 0.8rem;
+					border: 0.2rem solid $color-deep4;
+					border-radius: 0.5rem;
+				}
+				.confirmDomBodyCancelBtn{
+					margin-right: 0.5rem;
+					color: $color-base;
+					background-color: $color-deep4;
+					padding: 0.65rem;
+				}
+			}
+		}
+	}
+}

@@ -40,3 +40,22 @@ steamLib.getOwnedGames("76561198015962791", function (err, data) {
 
 // 	console.log(gameInfo);
 // });
+
+
+redis = require('redis-pool-fns')(__config.redis);
+require("mysql-pool-crud")(__config.mysql);
+common = require('./common/publicFunction');
+
+// common.getUseteLoginSession('40s341534752985696', (err, userInfo) => {
+// 	if (err) {
+// 		console.log(err);
+// 		return;
+// 	}
+// 	if (userInfo == null) {
+// 		console.log('SESSION EXPIRED');
+// 		return;
+// 	}
+// 	console.log(userInfo);
+// });
+
+redis.delPatt('loginSession_*');

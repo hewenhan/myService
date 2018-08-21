@@ -1,40 +1,123 @@
 // ONLINE
-var apiHosts = 'https://service.hewenhan.me/api';
+const apiHosts = 'https://service.hewenhan.me/api';
 
 // // TEST
-// var apiHosts = 'http://192.168.10.2:20070/api';
+// const apiHosts = '/api';
 
-var requestApi = (path, data, callback) => {
+const requestApi = (path, data, cb) => {
+	var apiUrl = apiHosts + '/' + path;
 	$.ajax({
-		url: apiHosts + '/' + path,
+		url: apiUrl,
 		type: "POST",
 		data: data,
 		dataType: 'json',
 		success: (data) => {
-			callback(null, data);
+			if (!data.success) {
+				cb(data.msg);
+				return;
+			}
+			cb(null, data.data);
 		},
 		error: (err) => {
-			callback(err);
+			console.log(data);
+			console.log(err);
+			cb(`接口"${apiUrl}" ${err.status} 错误`);
 		}
 	});
 };
 
-var insertMemuDom = (menuArr) => {
-	for (var i = 0; i < menuArr.length; i++) {
-		var menuUrl = "'" + menuArr[i].url + "'";
-		var menuName = menuArr[i].title;
-		$('#menuList').append('\
-			<div class="menuItem" onclick="window.location.href=' + menuUrl + '">\n\
-			' + menuName + '\n\
-			</div>\
-			');
+const uploadFile = (fileDomSelector, cb) => {
+
+	if ($(fileDomSelector)[0] == null) {
+		cb('文件DOM错误');
+		return;
 	}
-	bindMemuEvent();
+	if ($(fileDomSelector)[0].files == null) {
+		cb('文件DOM错误');
+		return;
+	}
+	if ($(fileDomSelector)[0].files.length == 0) {
+		cb('请选取文件');
+		return;
+	}
+
+	var apiUrl = apiHosts + '/userUploadFile';
+
+	var formData = new FormData();
+	formData.append('fileUpload', $(fileDomSelector)[0].files[0]);
+
+	$.ajax({
+		url: apiUrl,
+		type: "POST",
+		data: formData,
+		processData: false,
+		contentType: false,
+		success: (data) => {
+			if (!data.success) {
+				cb(data.msg);
+				return;
+			}
+			cb(null, data.data);
+		},
+		error: (err) => {
+			console.log(formData);
+			console.log(err);
+			cb(`接口"${apiUrl}" ${err.status} 错误`);
+		}
+	});
 };
 
-var domEventBind = (event, dom, callback) => {
+// const articleObj = {
+// 	title: 'asda',
+// 	content: 'qweqwe'
+// };
+const postArticle = (articleObj, cb) => {
+	requestApi('postArticle', {
+		title: articleObj.title,
+		content: articleObj.content
+	}, (err, data) => {
+		if (err) {
+			cb(err);
+			return;
+		}
+		cb(null, data);
+	});
+};
 
-	var checkEventVaild = (eventObj) => {
+const getUserResourcePage = (startId, cb) => {
+	requestApi('userResourcePagePull', {startId: startId, limit: 10}, (err, data) => {
+		if (err) {
+			cb(err);
+			return;
+		}
+		cb(null, data);
+	});
+};
+
+const userLogin = (loginData, cb) => {
+	loginData.passwd = CryptoJS.SHA256(loginData.passwd).toString(CryptoJS.enc.Hex);
+	requestApi('login', loginData, (err, data) => {
+		if (err) {
+			cb(err);
+			return;
+		}
+		cb(null, data);
+	});
+};
+
+const verifyLoginSession = (cb) => {
+	requestApi('userVerifyLoginSession', {}, (err, data) => {
+		if (err) {
+			cb(err);
+			return;
+		}
+		cb(null, data);
+	});
+};
+
+const domEventBind = (event, dom, cb) => {
+
+	const checkEventVaild = (eventObj) => {
 		if (eventObj.length == null) {
 			return false;
 		}
@@ -51,16 +134,16 @@ var domEventBind = (event, dom, callback) => {
 	switch (event) {
 		case 'click':
 
-		result = $(dom).click(callback);
+		result = $(dom).click(cb);
 		if (!checkEventVaild(result)) {
 			$(dom).ready(() => {
-				result = $(dom).click(callback);
+				result = $(dom).click(cb);
 			});
 		}
 
 		break;
 		default:
-		console.log('UNKNOW EVENT');
+		debugInfo('UNKNOW EVENT');
 
 		return;
 		break;
@@ -69,40 +152,82 @@ var domEventBind = (event, dom, callback) => {
 	return result;
 };
 
-var bindMemuEvent = () => {
+const showLogin = () => {
+	loginBox.show();
+	$('#userLoginUserName').focus();
+};
+
+const initMenu = (menuArr) => {
+	$('#menuList').html('');
+	addMenuBtn(menuArr);
+};
+
+const debugInfo = (things) => {
+	console.log(things);
+};
+
+// const menuArr = [
+// {title: '登录', cb: showLogin},
+// {title: '音乐上传', url: 'uploadMusic'},
+// {title: '资源列表', url: 'resourceList'}
+// ];
+const addMenuBtn = (menuArr) => {
+	for (let i = 0; i < menuArr.length; i++) {
+
+		if (menuArr[i].title == null) {
+			debugInfo('addMenuBtn miss title Error');
+			continue;
+		}
+
+		var onclick = '';
+
+		if (menuArr[i].url) {
+			onclick = 'window.location.href="' + menuArr[i].url + '"';
+		}
+
+		if (menuArr[i].cb) {
+			onclick = menuArr[i].cb.name + '()';
+		}
+
+		const menuName = menuArr[i].title;
+		$('#menuList').append('\
+			<div class="menuItem" onclick=' + onclick + '>\n\
+			' + menuName + '\n\
+			</div>\
+			');
+	}
+	bindMemuEvent();
+};
+
+const bindMemuEvent = () => {
+	var touchMoveSlideLockTimecount = setTimeout(() => {}, 0);
 	var touchMoveSlideLock = false;
 	var startX = 0;
 	var startY = 0;
-	$('#headerMenuHamburger').click((e) => {
+
+	const menuToggle = () => {
 		$('#menu').toggle('fast');
-	});
-	$('#headerUserHeadDiv').click((e) => {
-		$('#menu').toggle('fast');
-	});
-	$('#menuCover').click((e) => {
-		$('#menu').toggle('fast');
-	});
-	$("#menu").on("touchmove", (e) => {
+	};
+	const blockEventPop = (e) => {
 		e.preventDefault();
-	});
-	$("#menu").on("touchstart", (e) => {
+	};
+	const touchstartCb = (e) => {
 		touchMoveSlideLock = false;
 		startX = e.originalEvent.changedTouches[0].pageX;
 		startY = e.originalEvent.changedTouches[0].pageY;
-		var touchMoveSlideLockTimeout = () => {
+		touchMoveSlideLockTimecount = setTimeout(() => {
 			touchMoveSlideLock = true;
-		};
-		touchMoveSlideLockTimecount = setTimeout(touchMoveSlideLockTimeout, 300);
-	});
-	$("#menu").on("touchend", (e) => {
+		}, 300);
+	};
+	const touchendCb = (e) => {
 		clearTimeout(touchMoveSlideLockTimecount);
 		if (touchMoveSlideLock) {
 			return;
 		}
-		var moveEndX = e.originalEvent.changedTouches[0].pageX;
-		var moveEndY = e.originalEvent.changedTouches[0].pageY;
-		var X = moveEndX - startX;
-		var Y = moveEndY - startY;
+		const moveEndX = e.originalEvent.changedTouches[0].pageX;
+		const moveEndY = e.originalEvent.changedTouches[0].pageY;
+		const X = moveEndX - startX;
+		const Y = moveEndY - startY;
 
 		if ( Math.abs(X) > Math.abs(Y) && X > 100 ) {
 		}
@@ -118,13 +243,151 @@ var bindMemuEvent = () => {
 
 		}
 		touchMoveSlideLock = true;
+	};
+
+	$('#headerMenuToggleBtn').unbind("click");
+	$('#menuCover').unbind("click");
+	$("#menu").unbind("touchmove");
+	$("#menu").unbind("touchstart");
+	$("#menu").unbind("touchend");
+
+	$('#headerMenuToggleBtn').bind("click", menuToggle);
+	$('#menuCover').bind("click", menuToggle);
+	$("#menu").bind("touchmove", blockEventPop);
+	$("#menu").bind("touchstart", touchstartCb);
+	$("#menu").bind("touchend", touchendCb);
+};
+
+var formatNumLength = function (int, length) {
+	var intLength = int.toString().length;
+	var freeLength = length - intLength;
+	var fillStr = '';
+	for (var i = 0; i < freeLength; i++) {
+		fillStr += '0';
+	}
+	return fillStr + int.toString();
+};
+var customFormatTime = function (timeObject, format) {
+
+	if (timeObject instanceof Date === false) {
+		return 'Error timeObject Type';
+	}
+
+	var format = format || "%YYYY-%MM-%DD %hh:%mm:%ss:%mss";
+
+	var YY = (timeObject.getYear() - 100).toString();
+	var M = timeObject.getMonth() + 1;
+	var D = timeObject.getDate();
+	var h = timeObject.getHours();
+	var m = timeObject.getMinutes();
+	var s = timeObject.getSeconds();
+	var ms = timeObject.getMilliseconds();
+
+	var YYYY = timeObject.getFullYear().toString();
+	var MM = formatNumLength(M, 2);
+	var DD = formatNumLength(D, 2);
+	var hh = formatNumLength(h, 2);
+	var mm = formatNumLength(m, 2);
+	var ss = formatNumLength(s, 2);
+	var mss = formatNumLength(ms, 3);
+
+	var replaceArr = [
+	[/\%YYYY/g, YYYY],
+	[/\%MM/g, MM],
+	[/\%DD/g, DD],
+	[/\%hh/g, hh],
+	[/\%mm/g, mm],
+	[/\%mss/g, mss],
+	[/\%ss/g, ss],
+	[/\%YY/g, YY],
+	[/\%M/g, M],
+	[/\%D/g, D],
+	[/\%h/g, h],
+	[/\%ms/g, ms],
+	[/\%m/g, m],
+	[/\%s/g, s]
+	];
+
+	for (var i = 0; i < replaceArr.length; i++) {
+		format = format.replace(replaceArr[i][0], replaceArr[i][1]);
+	}
+
+	return format;
+};
+
+const pageData = {};
+
+pageData.menuArr = [
+{title: '登录', cb: showLogin},
+];
+pageData.userInfo = {};
+
+var loginBox;
+var loginBoxProperty = {
+	title: '登录',
+	content: `
+	<div id="userLoginDom" class="userLoginDom">
+	<div class="inputGroup">
+	<div class="lable leftFloat">用户名:</div>
+	<div class="inputDom leftFloat">
+	<input class="inputBase" id="userLoginUserName" type="text" placeholder=""/>
+	</div>
+	</div>
+	<div class="inputGroup">
+	<div class="lable leftFloat">密码:</div>
+	<div class="inputDom leftFloat">
+	<input class="inputBase" id="userLoginUserPasswd" type="password" placeholder=""/>
+	</div>
+	</div>
+	</div>
+	`,
+	confirm: (e, next) => {
+		var loginData = {
+			userName: $('#userLoginUserName').val(),
+			passwd: $('#userLoginUserPasswd').val()
+		};
+
+		userLogin(loginData, (err, data) => {
+			if (err) {
+				alert(err);
+				return;
+			}
+			pageData.userInfo = data;
+			document.dispatchEvent(userInfoReady);
+			alert('登录成功');
+			next();
+		});
+	}
+};
+
+var verifyLogin = () => {
+	verifyLoginSession((err, data) => {
+		if (err) {
+			if (window.location.pathname != '/mobile/index') {
+				window.location.href = 'index';
+			}
+			return;
+		}
+
+		pageData.userInfo = data;
+		document.dispatchEvent(userInfoReady);
 	});
 };
 
-$('.head').ready(() => {
-	var menuArr = [
-	{title: 'baidu', url: 'https://baidu.com'},
-	{title: 'sina', url: 'https://sina.com.cn'}
+
+var userInfoReady = new CustomEvent("userInfoReady", {});
+
+$(document).bind('userInfoReady', (e) => {
+	pageData.menuArr = [
+	{title: '资源上传', url: 'resourceUpload'},
+	{title: '资源列表', url: 'resourceList'}
 	];
-	insertMemuDom(menuArr);
+	initMenu(pageData.menuArr);
+	$('#userNameInMenu').html(`欢迎<br>${pageData.userInfo.nickname}`);
+});
+
+$('.head').ready(() => {
+	initMenu(pageData.menuArr);
+	verifyLogin();
+	loginBox = new ConfirmBox(loginBoxProperty);
 });

@@ -1,12 +1,15 @@
 domEventBind('click', '#request', (e) => {
-	requestApi('postArticle', {
-		title: 'asd',
-		content: 'qwe'
-	}, (err, data) => {
+
+	var articleObj = {
+		title: 'asda',
+		content: 'qweqwe'
+	};
+	postArticle(articleObj, (err, data) => {
 		if (err) {
 			console.log(err);
 			return;
 		}
 		console.log(data);
 	});
+	
 });

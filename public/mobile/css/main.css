@@ -14,6 +14,10 @@ body {
   background-color: #ADD5F7;
   color: #35478C; }
 
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word; }
+
 .content .text {
   background-color: #7FB2F0;
   padding: 1rem 0;
@@ -30,12 +34,25 @@ img {
   width: 100%;
   display: block; }
 
+input {
+  display: block;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -o-appearance: none;
+  appearance: none; }
+
+button {
+  border: 0;
+  background-color: transparent;
+  outline: none;
+  font-size: 1rem; }
+
 .head .menu {
   width: 18rem;
   height: 100%;
   position: fixed;
   background: #35478C;
-  color: #ADD5F7;
+  color: #FFFFFF;
   box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.75);
   display: none;
   z-index: 10; }
@@ -59,12 +76,11 @@ img {
     line-height: 3rem;
     text-align: center; }
   .head .menu .userNameInMenu {
-    color: #ADD5F7;
     text-align: center;
-    height: 3rem;
-    line-height: 3rem;
+    height: auto;
     font-size: 1.5rem;
-    overflow: hidden; }
+    padding: 1rem 0rem;
+    box-shadow: inset 0 -4px 8px 0 #16193B; }
   .head .menu .menuHelpInfo {
     color: #ADD5F7;
     text-align: center;
@@ -75,42 +91,111 @@ img {
     position: absolute;
     bottom: 0px;
     width: 18rem; }
+  .head .menu .menuList {
+    max-height: 40rem;
+    overflow: auto; }
 
-.head .headBar .fixedStick {
-  background: #35478C;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  text-align: center;
-  z-index: 20;
-  box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.75);
-  overflow: hidden;
-  max-width: 750px;
-  margin: 0 auto;
-  height: 3.8rem;
-  display: table-row; }
-
-.head .headBar .headerMenuHamburger {
-  width: 2rem;
-  height: 3.8rem;
-  display: table-cell;
-  vertical-align: middle;
-  padding-left: 1rem;
-  padding-right: 1rem; }
+.head .headBar {
+  color: #FFFFFF; }
+  .head .headBar .fixedStick {
+    background: #35478C;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 5;
+    box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.75);
+    overflow: hidden;
+    max-width: 750px;
+    margin: 0 auto;
+    height: 3.8rem;
+    display: table-row; }
+  .head .headBar .headerMenuToggleBtn {
+    width: 2rem;
+    display: block;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    position: absolute;
+    left: 0;
+    top: 0.7rem; }
+  .head .headBar .headerLogo {
+    text-align: center;
+    line-height: 3.8rem;
+    font-style: italic;
+    font-weight: bold; }
 
 .head .holder1 {
   height: 3.8rem;
   width: 100%; }
 
-.content {
-  padding: 1rem; }
+.tableList {
+  margin: 0 1rem;
+  font-size: 0.9rem; }
+  .tableList .tableCell {
+    margin-bottom: 1rem; }
+  .tableList .tableLineCell1 {
+    width: 75%;
+    height: 100%; }
+  .tableList .tableLineCell2 {
+    width: 25%;
+    height: 100%; }
+  .tableList .tableLineCell3 {
+    width: 50%;
+    height: 100%; }
+  .tableList .tableLine {
+    width: 100%;
+    overflow: hidden;
+    height: 2rem;
+    line-height: 2rem;
+    border-top: 1px solid #ADD5F7;
+    box-shadow: 1px 1px 5px #35478C;
+    background: #7FB2F0; }
+  .tableList .tableTitle {
+    width: 25%;
+    background: #35478C;
+    color: #FFFFFF; }
+  .tableList .tableLine div {
+    float: left;
+    text-align: center; }
 
 .btn {
-  width: 8rem;
-  height: 3rem;
-  line-height: 3rem;
+  width: 6.5rem;
+  line-height: 2.5rem;
+  height: 2.5rem;
   margin: 0 auto;
+  text-align: center;
   background-color: #4E7AC7;
-  color: #ADD5F7;
-  text-align: center; }
+  color: #ADD5F7; }
+
+.lable {
+  width: 30%;
+  height: 2rem; }
+
+.inputDom {
+  width: 60%;
+  height: 2rem; }
+
+.inputGroup {
+  width: 100%;
+  display: inline-block;
+  margin-bottom: 0.5rem; }
+
+.inputBase {
+  color: #35478C;
+  outline: none;
+  border: 0px solid #35478C;
+  background: #ADD5F7;
+  width: 100%;
+  height: 100%;
+  font-size: 1.2rem; }
+
+.userLoginDom {
+  width: 100%;
+  white-space: normal; }
+
+.leftFloat {
+  float: left; }
+
+.content {
+  padding: 1rem; }

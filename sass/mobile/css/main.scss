@@ -1,9 +1,9 @@
-
 $color-base: #ADD5F7;
 $color-deep1: #7FB2F0;
 $color-deep2: #4E7AC7;
 $color-deep3: #35478C;
 $color-deep4: #16193B;
+$color-title: #FFFFFF;
 
 html{
 	font-size: 15px;
@@ -20,6 +20,10 @@ body{
 	overflow-x: hidden;
 	background-color: $color-base;
 	color: $color-deep3;
+}
+pre{
+	white-space: pre-wrap;
+	word-wrap: break-word;
 }
 .content{
 	.text{
@@ -40,6 +44,19 @@ img{
 	width: 100%;
 	display: block;
 }
+input{
+	display: block;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	-o-appearance: none;
+	appearance: none;
+}
+button{
+	border: 0;
+	background-color: transparent;
+	outline: none;
+	font-size: 1rem;
+}
 
 .head{
 	.menu{
@@ -47,7 +64,7 @@ img{
 		height: 100%;
 		position: fixed;
 		background: $color-deep3;
-		color: $color-base;
+		color: $color-title;
 		box-shadow: 0 0 7px 0 rgba( 0, 0, 0, 0.75 );
 		display: none;
 		z-index: 10;
@@ -74,14 +91,13 @@ img{
 			text-align: center;
 		}
 		.userNameInMenu{
-			color: $color-base;
 			text-align: center;
-			height: 3rem;
-			line-height: 3rem;
+			height: auto;
 			font-size: 1.5rem;
-			overflow: hidden;
+			padding: 1rem 0rem;
+			box-shadow: inset 0 -4px 8px 0 $color-deep4;
 		}
-		.menuHelpInfo {
+		.menuHelpInfo{
 			color: $color-base;
 			text-align: center;
 			height: 3rem;
@@ -92,8 +108,13 @@ img{
 			bottom: 0px;
 			width: 18rem;
 		}
+		.menuList{
+			max-height: 40rem;
+			overflow: auto;
+		}
 	}
 	.headBar{
+		color: $color-title;
 		.fixedStick{
 			background: $color-deep3;
 			position: fixed;
@@ -101,7 +122,7 @@ img{
 			left: 0;
 			right: 0;
 			text-align: center;
-			z-index: 20;
+			z-index: 5;
 			box-shadow: 0 0 7px 0 rgba( 0, 0, 0, 0.75 );
 			overflow: hidden;
 			max-width: 750px;
@@ -109,13 +130,20 @@ img{
 			height: 3.8rem;
 			display: table-row;
 		}
-		.headerMenuHamburger{
+		.headerMenuToggleBtn{
 			width: 2rem;
-			height: 3.8rem;
-			display: table-cell;
-			vertical-align: middle;
+			display: block;
 			padding-left: 1rem;
 			padding-right: 1rem;
+			position: absolute;
+			left: 0;
+			top: 0.7rem;
+		}
+		.headerLogo{
+			text-align: center;
+			line-height: 3.8rem;
+			font-style: italic;
+			font-weight: bold;
 		}
 	}
 	.holder1{
@@ -123,18 +151,93 @@ img{
 		width: 100%;
 	}
 }
+.tableList{
+	margin: 0 1rem;
+	// background: $color-deep1;
+	font-size: 0.9rem;
+	.tableCell{
+		margin-bottom: 1rem;
+	}
+
+	.tableLineCell1{
+		width: 75%;
+		height: 100%;
+	}
+
+	.tableLineCell2{
+		width: 25%;
+		height: 100%;
+	}
+	.tableLineCell3{
+		width: 50%;
+		height: 100%;
+	}
+
+	.tableLine{
+		width: 100%;
+		overflow: hidden;
+		height: 2rem;
+		line-height: 2rem;
+		border-top: 1px solid $color-base;
+		box-shadow: 1px 1px 5px $color-deep3;
+		background: $color-deep1;
+	}
+
+	.tableTitle{
+		width: 25%;
+		background: $color-deep3;
+		color: $color-title;
+	}
+
+	.tableLine div {
+		float: left;
+		text-align: center;
+	}
+}
+
+.btn{
+	width: 6.5rem;
+	line-height: 2.5rem;
+	height: 2.5rem;
+	margin: 0 auto;
+	text-align: center;
+	background-color: $color-deep2;
+	color: $color-base;
+}
+.lable{
+	width: 30%;
+	height: 2rem;
+}
+.inputDom{
+	width: 60%;
+	height: 2rem;
+}
+.inputGroup{
+	width: 100%;
+	display: inline-block;
+	margin-bottom: 0.5rem;
+}
+.inputBase{
+	color: $color-deep3;
+	outline: none;
+	border: 0px solid $color-deep3;
+	background: $color-base;
+	width: 100%;
+	height: 100%;
+	font-size: 1.2rem;
+}
+.userLoginDom{
+	width: 100%;
+	white-space: normal;
+}
+.leftFloat{
+	float: left;
+}
+
 .content{
 	padding: 1rem;
 }
-.btn{
-	width: 8rem;
-	height: 3rem;
-	line-height: 3rem;
-	margin: 0 auto;
-	background-color: $color-deep2;
-	color: $color-base;
-	text-align: center;
-}
+
 .foot{
 
 }

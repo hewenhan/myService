@@ -1,8 +1,8 @@
-// ONLINE
-const apiHosts = 'https://service.hewenhan.me/api';
+// // ONLINE
+// const apiHosts = 'https://service.hewenhan.me/api';
 
-// // TEST
-// const apiHosts = '/api';
+// TEST
+const apiHosts = '/api';
 
 const requestApi = (path, data, cb) => {
 	var apiUrl = apiHosts + '/' + path;
@@ -13,6 +13,11 @@ const requestApi = (path, data, cb) => {
 		dataType: 'json',
 		success: (data) => {
 			if (!data.success) {
+				if (data.msg == 'session key empty or expired') {
+					alert('登录过期或请重新登录');
+					tipUserLogin();
+					return;
+				}
 				cb(data.msg);
 				return;
 			}
@@ -75,6 +80,30 @@ const postArticle = (articleObj, cb) => {
 	requestApi('postArticle', {
 		title: articleObj.title,
 		content: articleObj.content
+	}, (err, data) => {
+		if (err) {
+			cb(err);
+			return;
+		}
+		cb(null, data);
+	});
+};
+
+const userResourceUrlParse = (url, cb) => {
+	requestApi('userResourceUrlParse', {
+		url: url,
+	}, (err, data) => {
+		if (err) {
+			cb(err);
+			return;
+		}
+		cb(null, data);
+	});
+};
+
+const userResourceRegister = (resourceId, cb) => {
+	requestApi('userResourceRegister', {
+		resourceId: resourceId,
 	}, (err, data) => {
 		if (err) {
 			cb(err);
@@ -258,7 +287,86 @@ const bindMemuEvent = () => {
 	$("#menu").bind("touchend", touchendCb);
 };
 
-var formatNumLength = function (int, length) {
+var getQueryStringByName = (name) => {
+	var result = location.search.match(new RegExp("[\?\&]" + name + "=([^\&]+)", "i"));
+	if (result === null || result.length < 1) {
+		return "";
+	}
+	return result[1];
+};
+
+var removeQueryByName = (url, name) => {
+	var str = "";
+	if (url.indexOf('?') != -1) {
+		str = url.substr(url.indexOf('?') + 1);
+	} else {
+		return url;
+	}
+	var arr = "";
+	var returnurl = "";
+	var setparam = "";
+	if (str.indexOf('&') != -1) {
+		arr = str.split('&');
+		for (var i = 0; i < arr.length; i++) {
+			if (arr[i].split('=')[0] != name) {
+				returnurl = returnurl + arr[i].split('=')[0] + "=" + arr[i].split('=')[1] + "&";
+			}
+		}
+		return url.substr(0, url.indexOf('?')) + "?" + returnurl.substr(0, returnurl.length - 1);
+	} else {
+		arr = str.split('=');
+		if (arr[0] == name) {
+			return url.substr(0, url.indexOf('?'));
+		} else {
+			return url;
+		}
+	}
+};
+
+var setUrlParam = (url, name, value) => {
+	var splitIndex = url.indexOf("?") + 1;
+	var paramStr = url.substr(splitIndex, url.length);
+
+	var newUrl = url.substr(0, splitIndex);
+
+	var arr = paramStr.split('&');
+	for (var i = 0; i < arr.length; i++) {
+		var kv = arr[i].split('=');
+		if (kv[0] == name) {
+			newUrl += kv[0] + "=" + value;
+		} else {
+			if (kv[1] != undefined) {
+				newUrl += kv[0] + "=" + kv[1];
+			}
+		}
+		if (i != arr.length - 1) {
+			newUrl += "&";
+		}
+	}
+	if (newUrl.indexOf(name) < 0) {
+		newUrl += splitIndex == 0 ? "?" + name + "=" + value : "&" + name + "=" + value;
+	}
+	return newUrl;
+};
+
+var randomStr = (length) => {
+	var length = parseInt(length);
+	var str = '';
+	if (length / 25 >= 1) {
+		for (var i = 0; i < Math.floor(length / 25); i++) {
+			str += Math.random().toString(36).substr(2, 25);
+		}
+	}
+	str += Math.random().toString(36).substr(2, length % 25);
+	return str;
+};
+var refash = () => {
+	var url = window.location.href;
+	url = setUrlParam(url, 'randomStr', randomStr(5));
+	window.location.href = url;
+};
+
+var formatNumLength = (int, length) => {
 	var intLength = int.toString().length;
 	var freeLength = length - intLength;
 	var fillStr = '';
@@ -267,7 +375,7 @@ var formatNumLength = function (int, length) {
 	}
 	return fillStr + int.toString();
 };
-var customFormatTime = function (timeObject, format) {
+var customFormatTime = (timeObject, format) => {
 
 	if (timeObject instanceof Date === false) {
 		return 'Error timeObject Type';
@@ -360,12 +468,17 @@ var loginBoxProperty = {
 	}
 };
 
+var tipUserLogin = () => {
+	if (!/\/mobile\/index/.test(window.location.pathname)) {
+		window.location.href = 'index?tipLogin=true';
+	}
+	showLogin();
+};
+
 var verifyLogin = () => {
 	verifyLoginSession((err, data) => {
 		if (err) {
-			if (window.location.pathname != '/mobile/index') {
-				window.location.href = 'index';
-			}
+			tipUserLogin();
 			return;
 		}
 
@@ -380,10 +493,12 @@ var userInfoReady = new CustomEvent("userInfoReady", {});
 $(document).bind('userInfoReady', (e) => {
 	pageData.menuArr = [
 	{title: '资源上传', url: 'resourceUpload'},
+	{title: '资源提取', url: 'resourcePick'},
 	{title: '资源列表', url: 'resourceList'}
 	];
 	initMenu(pageData.menuArr);
 	$('#userNameInMenu').html(`欢迎<br>${pageData.userInfo.nickname}`);
+	$('#tipMsg').html('');
 });
 
 $('.head').ready(() => {

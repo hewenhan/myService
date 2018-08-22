@@ -16,7 +16,9 @@ body {
 
 pre {
   white-space: pre-wrap;
-  word-wrap: break-word; }
+  word-wrap: break-word;
+  text-align: start;
+  margin: 0em; }
 
 .content .text {
   background-color: #7FB2F0;
@@ -74,7 +76,8 @@ button {
     font-size: 1.2rem;
     height: 3rem;
     line-height: 3rem;
-    text-align: center; }
+    text-align: center;
+    cursor: pointer; }
   .head .menu .userNameInMenu {
     text-align: center;
     height: auto;
@@ -166,10 +169,12 @@ button {
   margin: 0 auto;
   text-align: center;
   background-color: #4E7AC7;
-  color: #ADD5F7; }
+  color: #ADD5F7;
+  cursor: pointer; }
 
 .lable {
   width: 30%;
+  line-height: 2rem;
   height: 2rem; }
 
 .inputDom {

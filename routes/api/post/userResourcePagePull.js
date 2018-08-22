@@ -5,7 +5,7 @@ const getUserResourcePage = (req, res) => {
 			uid: req.allParams.userInfo.id,
 			status: 1
 		},
-		order: "create_time DESC"
+		order: "update_time DESC"
 	};
 	selectPrePage(getRecordJson, req.allParams.startId || 0, req.allParams.limit || 100, function (err, rows, lastId, hasNext) {
 		if (err) {
@@ -21,26 +21,7 @@ const getUserResourcePage = (req, res) => {
 };
 
 module.exports = (req, res, next) => {
-	if (req.cookies.loginSession == null) {
-		res.error('session key empty or expired');
-		return;
-	}
-
 	res.thisData = {};
 	res.thisData.result = {};
-
-	common.getUseteLoginSession(req.cookies.loginSession, (err, userInfo) => {
-		if (err) {
-			res.clearCookie('loginSession');
-			res.error('session key empty or expired');
-			return;
-		}
-		if (userInfo == null) {
-			res.clearCookie('loginSession');
-			res.error('session key empty or expired');
-			return;
-		}
-		req.allParams.userInfo = userInfo;
-		getUserResourcePage(req, res);
-	});
+	getUserResourcePage(req, res);
 };

@@ -1,15 +1,5 @@
-domEventBind('click', '#request', (e) => {
-
-	var articleObj = {
-		title: 'asda',
-		content: 'qweqwe'
-	};
-	postArticle(articleObj, (err, data) => {
-		if (err) {
-			console.log(err);
-			return;
-		}
-		console.log(data);
-	});
-	
+$(document).ready(() => {
+	if (getQueryStringByName('tipLogin') == 'true' && !pageData.userInfo.id) {
+		$('#tipMsg').html('您无权访问页面，请先登录');
+	}
 });

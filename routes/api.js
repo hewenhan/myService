@@ -6,6 +6,7 @@ var routerFunction = require('../common/router');
 router.use(routerFunction.responseFn);
 router.use(routerFunction.mergeParams);
 router.use(routerFunction.verifyParams);
+router.use(routerFunction.verifyCookies);
 
 try {
 	fs.mkdirSync(__dirname + '/api');

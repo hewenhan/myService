@@ -1,0 +1,38 @@
+@import "colorConfig.scss";
+textarea { 
+	resize: none;
+} 
+.urlResourceLable{
+	margin: 0 auto;
+}
+.urlResourceDom{
+	height: 10rem;
+	width: 100%;
+	margin-bottom: 0.5rem;
+	.resourceArea{
+		background: $color-deep1;
+		padding: 0.5rem;
+		box-sizing: border-box;
+	}
+}
+.resourceResultArea{
+	padding: 0.5rem;
+	box-sizing: border-box;
+	background: $color-deep1;
+	min-height: 10rem;
+	max-height: 20rem;
+	margin-bottom: 0.5rem;
+}
+
+.parseStatStandBy{
+	color: $color-deep4;
+}
+.parseStatRuning{
+	color: $color-deep3;
+}
+.parseStatDone{
+	color: $color-deep2;
+}
+.parseStatError{
+	color: $color-deep1;
+}

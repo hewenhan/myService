@@ -8,13 +8,14 @@ var insertUserResource = (req, res) => {
 			filename: req.files.fileUpload.name,
 			mimetype: req.files.fileUpload.mimetype,
 			url: req.allParams.url,
-			md5: req.files.fileUpload.md5
+			md5: req.files.fileUpload.md5,
+			status: 1
 		}
 	};
 
 	insert(insertUserResourceJson, (err) => {
 		if (err) {
-			res.error('INSERT ARTICLE ERROR');
+			res.error('INSERT user_resource ERROR');
 			return;
 		}
 		res.thisData.result.url = req.allParams.url;
@@ -71,29 +72,10 @@ module.exports = (req, res, next) => {
 		res.error('params error');
 		return;
 	}
-
-	if (req.cookies.loginSession == null) {
-		res.error('session key empty or expired');
-		return;
-	}
-
+	
 	res.thisData = {};
 	res.thisData.result = {};
 
 	console.log(req.files.fileUpload);
-
-	common.getUseteLoginSession(req.cookies.loginSession, (err, userInfo) => {
-		if (err) {
-			res.clearCookie('loginSession');
-			res.error('session key empty or expired');
-			return;
-		}
-		if (userInfo == null) {
-			res.clearCookie('loginSession');
-			res.error('session key empty or expired');
-			return;
-		}
-		req.allParams.userInfo = userInfo;
-		checkFileRepeat(req, res);
-	});
+	checkFileRepeat(req, res);
 };

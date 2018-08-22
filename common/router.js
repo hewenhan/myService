@@ -116,3 +116,28 @@ this.verifyParams = function (req, res, next) {
 	};
 	next();
 };
+
+this.verifyCookies = function (req, res, next) {
+	if (!/^\/user/.test(req._parsedUrl.pathname)) {
+		next();
+		return;
+	}
+	if (req.cookies.loginSession == null) {
+		res.error('session key empty or expired');
+		return;
+	}
+	common.getUseteLoginSession(req.cookies.loginSession, (err, userInfo) => {
+		if (err) {
+			res.clearCookie('loginSession');
+			res.error('session key empty or expired');
+			return;
+		}
+		if (userInfo == null) {
+			res.clearCookie('loginSession');
+			res.error('session key empty or expired');
+			return;
+		}
+		req.allParams.userInfo = userInfo;
+		next();
+	});
+};

@@ -149,7 +149,16 @@ var switchResource = (req, res) => {
 		parseChangbaResource(req, res);
 
 		break;
+		case 'kg.qq.com':
+		case 'kg1.qq.com':
 		case 'kg2.qq.com':
+		case 'kg3.qq.com':
+		case 'kg4.qq.com':
+		case 'kg5.qq.com':
+		case 'kg6.qq.com':
+		case 'kg7.qq.com':
+		case 'kg8.qq.com':
+		case 'kg9.qq.com':
 		case 'node.kg.qq.com':
 
 		parseQuanMinKGeResource(req, res);

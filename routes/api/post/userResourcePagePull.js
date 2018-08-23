@@ -9,7 +9,7 @@ const getUserResourcePage = (req, res) => {
 	};
 	selectPrePage(getRecordJson, req.allParams.startId || 0, req.allParams.limit || 100, function (err, rows, lastId, hasNext) {
 		if (err) {
-			result.msg = '获取充值记录列表失败';
+			result.msg = '获取资源列表失败';
 			res.jsonp(result);
 			return;
 		}

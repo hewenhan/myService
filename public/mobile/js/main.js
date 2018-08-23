@@ -18,7 +18,7 @@ const requestApi = (path, data, cb) => {
 					tipUserLogin();
 					return;
 				}
-				cb(data.msg);
+				cb(data.msg || '请求发生错误');
 				return;
 			}
 			cb(null, data.data);

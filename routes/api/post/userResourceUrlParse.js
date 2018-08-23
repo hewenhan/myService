@@ -123,8 +123,8 @@ var parseQuanMinKGeResource = (req, res) => {
 			}, {decodeEntities: true});
 			parser.write(data);
 			parser.end();
-			var resourceUrlParse = urlParse.parse(req.allParams.result.resourceUrl);
-			req.allParams.result.resourceUrl = `${resourceUrlParse.protocol}//${resourceUrlParse.host}${resourceUrlParse.pathname}`;
+			// var resourceUrlParse = urlParse.parse(req.allParams.result.resourceUrl);
+			// req.allParams.result.resourceUrl = `${resourceUrlParse.protocol}//${resourceUrlParse.host}${resourceUrlParse.pathname}`;
 
 			if (req.allParams.result.name && req.allParams.result.artist && req.allParams.result.resourceUrl) {
 				req.allParams.result.mimetype = 'audio/mp4';

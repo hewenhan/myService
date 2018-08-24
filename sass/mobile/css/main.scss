@@ -185,6 +185,16 @@ button{
 		width: 25%;
 		background: $color-deep3;
 		color: $color-title;
+		box-sizing: border-box;
+		border-right: 1px solid $color-deep1;
+	}
+
+	.tableTitle2{
+		width: 50%;
+		background: $color-deep3;
+		color: $color-title;
+		box-sizing: border-box;
+		border-right: 1px solid $color-deep1;
 	}
 
 	.tableLine div {
@@ -201,6 +211,9 @@ button{
 	text-align: center;
 	background-color: $color-deep2;
 	color: $color-base;
+	cursor: pointer;
+}
+.pointer{
 	cursor: pointer;
 }
 .lable{

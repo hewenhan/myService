@@ -157,7 +157,15 @@ button {
   .tableList .tableTitle {
     width: 25%;
     background: #35478C;
-    color: #FFFFFF; }
+    color: #FFFFFF;
+    box-sizing: border-box;
+    border-right: 1px solid #7FB2F0; }
+  .tableList .tableTitle2 {
+    width: 50%;
+    background: #35478C;
+    color: #FFFFFF;
+    box-sizing: border-box;
+    border-right: 1px solid #7FB2F0; }
   .tableList .tableLine div {
     float: left;
     text-align: center; }
@@ -170,6 +178,9 @@ button {
   text-align: center;
   background-color: #4E7AC7;
   color: #ADD5F7;
+  cursor: pointer; }
+
+.pointer {
   cursor: pointer; }
 
 .lable {

@@ -74,7 +74,7 @@ var parseQuanMinKGeResource = (req, res) => {
 	var options = {
 		url: req.allParams.urlParse.href,
 		headers: {
-			'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
+			'user-agent': 'Mozilla/5.0 (Linux; U; X11; en-US; Valve Steam Tenfoot/1533766730; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
 		}
 	};
 	reqHttp(options, (err, data) => {

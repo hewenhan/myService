@@ -117,6 +117,9 @@ var getResourceList = (startId) => {
 				`);
 
 			initCopyResourceUrl(`#copyResourceUrlBtn_${resource.id}`, resource.id);
+			$(".previewImg").lazyload({
+				effect: "fadeIn"
+			});
 
 			var mediaDom = $(`#previewMedia_${resource.id}`);
 			switch (mediaType) {
@@ -124,9 +127,6 @@ var getResourceList = (startId) => {
 
 				break;
 				case 'image':
-				$("img .previewImg").lazyload({
-					effect: "fadeIn"
-				});
 				case 'video':
 
 				mediaDom.parents('.tableLine').css('height', 'auto');

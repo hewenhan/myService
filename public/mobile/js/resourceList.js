@@ -66,7 +66,7 @@ var getResourceList = (startId) => {
 			}
 			if (/image/.test(resource.mimetype)) {
 				resourcePreviewHtml = `
-				<img id="previewMedia_${resource.id}" src="${resource.url}" />
+				<img id="previewMedia_${resource.id}" class="previewImg" src="https://static.hewenhan.me/userFiles/2a342e345897fb6615e067f078463fc58a13dd8cfe2015aed1847312b79dabff.gif" data-original="${resource.url}" />
 				`;
 				mediaType = 'image';
 			}
@@ -117,12 +117,16 @@ var getResourceList = (startId) => {
 				`);
 
 			initCopyResourceUrl(`#copyResourceUrlBtn_${resource.id}`, resource.id);
+
 			var mediaDom = $(`#previewMedia_${resource.id}`);
 			switch (mediaType) {
 				case 'audio':
 
 				break;
 				case 'image':
+				$("img .previewImg").lazyload({
+					effect: "fadeIn"
+				});
 				case 'video':
 
 				mediaDom.parents('.tableLine').css('height', 'auto');

@@ -38,8 +38,7 @@ const initUploadDom = () => {
 		autoUpload: false,
 		acceptFileTypes: /(\.|\/)(gif|jpe?g|png|mp3|mp4)$/i,
 		maxFileSize: 0,
-		disableImageResize: /Android(?!.*Chrome)|Opera/
-		.test(window.navigator.userAgent),
+		disableImageResize: true,
 		previewMinWidth: 100,
 		previewMaxWidth: 300,
 		previewMinHeight: 100,

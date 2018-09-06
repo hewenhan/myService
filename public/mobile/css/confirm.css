@@ -48,7 +48,7 @@
       margin-right: 1rem;
       overflow: auto;
       max-height: 25rem;
-      white-space: pre-wrap;
+      white-space: normal;
       word-wrap: break-word;
       margin-bottom: 2rem; }
     .confirmDom .confirmDomBody .confirmDomBodyBtn {

@@ -93,7 +93,7 @@ button{
 			height: auto;
 			font-size: 1.5rem;
 			padding: 1rem 0rem;
-			box-shadow: inset 0 -4px 8px 0 $color-deep4;
+			box-shadow: inset 0 -4px 8px 0 #282e69;
 		}
 		.menuHelpInfo{
 			color: $color-base;
@@ -109,6 +109,11 @@ button{
 		.menuList{
 			max-height: 40rem;
 			overflow: auto;
+			.active{
+				background-color: $color-deep2;
+				border-top: 0px solid $color-deep4;
+				border-bottom: 1px solid $color-deep2;
+			}
 		}
 	}
 	.headBar{
@@ -222,19 +227,27 @@ button{
 	height: 2rem;
 }
 .inputDom{
-	width: 60%;
+	width: 70%;
 	height: 2rem;
 }
 .inputGroup{
 	width: 100%;
 	display: inline-block;
 	margin-bottom: 0.5rem;
+	.inputCheckResult{
+		font-size: 0.8rem;
+		text-align: right;
+		color: $color-deep1;
+	}
+	.line-indent{
+		text-indent: 1rem;
+	}
 }
 .inputBase{
 	color: $color-deep3;
 	outline: none;
 	border: 0px solid $color-deep3;
-	background: $color-base;
+	background: $color-base-visable;
 	width: 100%;
 	height: 100%;
 	font-size: 1.2rem;
@@ -245,6 +258,9 @@ button{
 }
 .leftFloat{
 	float: left;
+}
+.rightFloat{
+	float: right;
 }
 
 .content{

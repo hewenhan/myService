@@ -126,7 +126,7 @@ this.verifyCookies = function (req, res, next) {
 		res.error('session key empty or expired');
 		return;
 	}
-	common.getUseteLoginSession(req.cookies.loginSession, (err, userInfo) => {
+	common.getUserInfoByLoginSession(req.cookies.loginSession, (err, userInfo) => {
 		if (err) {
 			res.clearCookie('loginSession');
 			res.error('session key empty or expired');

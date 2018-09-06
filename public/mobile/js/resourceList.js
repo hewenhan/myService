@@ -14,7 +14,12 @@ var showResourceDescription = (id) => {
 	if (thisStatus == 'block') {
 		return;
 	}
-	var a = $('#resourceDescriptionId_' + id).slideToggle('fast', () => {
+	$('#resourceDescriptionId_' + id).slideToggle('fast', () => {
+		if ($(`img#previewMedia_${id}`).attr('src') !== $(`img#previewMedia_${id}`).attr('data-original')) {
+			$(`img#previewMedia_${id}`).lazyload({
+				effect: "fadeIn"
+			});
+		}
 		var holderHeight = document.getElementsByClassName('fixedStick')[0].offsetHeight;
 		var height = document.getElementById('resourceId_' + id).offsetTop - holderHeight;
 		$('html,body').animate({scrollTop: height + 'px'}, 'fast');
@@ -25,8 +30,8 @@ var initCopyResourceUrl = (btnSelector, resourceId) => {
 	var resourceUrlDom = $(`#resourceId_${resourceId} .resourceUrl`);
 	var clipboard = new ClipboardJS(btnSelector, {
 		text: () => {
-            return resourceUrlDom.html();
-        }
+			return resourceUrlDom.html();
+		}
 	});
 
 	clipboard.on('success', (e) => {
@@ -79,47 +84,44 @@ var getResourceList = (startId) => {
 
 			$('#tableList').append(`
 				<div class="tableCell" id="resourceId_${resource.id}">
-					<div onclick="showResourceDescription(${resource.id})">
-						<div class="tableLine">
-							<div class="tableTitle">资源名</div>
-							<div class="tableLineCell1">${resource.filename}</div>
-						</div>
-						<div class="tableLine">
-							<div class="tableTitle">资源类型</div>
-							<div class="tableLineCell1">${resource.mimetype}</div>
-						</div>
-						<div class="tableLine">
-							<div class="tableTitle">资源地址</div>
-							<div class="tableLineCell1 resourceUrl">${resource.url}</div>
-						</div>
-						<div class="tableLine">
-							<div class="tableTitle">资源MD5</div>
-							<div class="tableLineCell1">${resource.md5}</div>
-						</div>
-						<div class="tableLine">
-							<div class="tableTitle">上传时间</div>
-							<div class="tableLineCell1">${customFormatTime(new Date(resource.create_time), '%YYYY-%MM-%DD %hh:%mm:%ss')}</div>
-						</div>
-					</div>
-					<div id="resourceDescriptionId_${resource.id}" class='resourceDescriptionDom'>
-						<div class="tableLine">
-							<div class="tableTitle">资源预览</div>
-							<div class="tableLineCell1">
-								${resourcePreviewHtml}
-							</div>
-						</div>
-						<div class="tableLine">
-							<div class="pointer tableTitle2" id="copyResourceUrlBtn_${resource.id}">复制链接</div>
-							<div class="pointer tableTitle2" onclick="downloadResource(${resource.id})">下载资源</div>
-						</div>
-					</div>
+				<div onclick="showResourceDescription(${resource.id})">
+				<div class="tableLine">
+				<div class="tableTitle">资源名</div>
+				<div class="tableLineCell1">${resource.filename}</div>
+				</div>
+				<div class="tableLine">
+				<div class="tableTitle">资源类型</div>
+				<div class="tableLineCell1">${resource.mimetype}</div>
+				</div>
+				<div class="tableLine">
+				<div class="tableTitle">资源地址</div>
+				<div class="tableLineCell1 resourceUrl">${resource.url}</div>
+				</div>
+				<div class="tableLine">
+				<div class="tableTitle">资源MD5</div>
+				<div class="tableLineCell1">${resource.md5}</div>
+				</div>
+				<div class="tableLine">
+				<div class="tableTitle">上传时间</div>
+				<div class="tableLineCell1">${customFormatTime(new Date(resource.create_time), '%YYYY-%MM-%DD %hh:%mm:%ss')}</div>
+				</div>
+				</div>
+				<div id="resourceDescriptionId_${resource.id}" class='resourceDescriptionDom'>
+				<div class="tableLine">
+				<div class="tableTitle">资源预览</div>
+				<div class="tableLineCell1">
+				${resourcePreviewHtml}
+				</div>
+				</div>
+				<div class="tableLine">
+				<div class="pointer tableTitle2" id="copyResourceUrlBtn_${resource.id}">复制链接</div>
+				<div class="pointer tableTitle2" onclick="downloadResource(${resource.id})">下载资源</div>
+				</div>
+				</div>
 				</div>
 				`);
 
 			initCopyResourceUrl(`#copyResourceUrlBtn_${resource.id}`, resource.id);
-			$(".previewImg").lazyload({
-				effect: "fadeIn"
-			});
 
 			var mediaDom = $(`#previewMedia_${resource.id}`);
 			switch (mediaType) {

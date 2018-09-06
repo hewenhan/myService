@@ -124,8 +124,27 @@ const getUserResourcePage = (startId, cb) => {
 };
 
 const userLogin = (loginData, cb) => {
-	loginData.passwd = CryptoJS.SHA256(loginData.passwd).toString(CryptoJS.enc.Hex);
 	requestApi('login', loginData, (err, data) => {
+		if (err) {
+			cb(err);
+			return;
+		}
+		cb(null, data);
+	});
+};
+
+const userRegister = (registerData, cb) => {
+	requestApi('register', registerData, (err, data) => {
+		if (err) {
+			cb(err);
+			return;
+		}
+		cb(null, data);
+	});
+};
+
+const userLogout = (cb) => {
+	requestApi('userLogout', null, (err, data) => {
 		if (err) {
 			cb(err);
 			return;
@@ -185,6 +204,10 @@ const showLogin = () => {
 	loginBox.show();
 	$('#userLoginUserName').focus();
 };
+const showRegister = () => {
+	registerBox.show();
+	$('#userRegisterBoxUserName').focus();
+};
 
 const initMenu = (menuArr) => {
 	$('#menuList').html('');
@@ -210,8 +233,12 @@ const addMenuBtn = (menuArr) => {
 
 		var onclick = '';
 
+		var active = '';
 		if (menuArr[i].url) {
 			onclick = 'window.location.href="' + menuArr[i].url + '"';
+			if (new RegExp(menuArr[i].url).test(window.location.href)) {
+				active = 'active';
+			}
 		}
 
 		if (menuArr[i].cb) {
@@ -219,8 +246,9 @@ const addMenuBtn = (menuArr) => {
 		}
 
 		const menuName = menuArr[i].title;
+		if (true) {}
 		$('#menuList').append('\
-			<div class="menuItem" onclick=' + onclick + '>\n\
+			<div class="menuItem ' + active + '" onclick=' + onclick + '>\n\
 			' + menuName + '\n\
 			</div>\
 			');
@@ -323,7 +351,7 @@ var removeQueryByName = (url, name) => {
 	}
 };
 
-var setUrlParam = (url, name, value) => {
+const setUrlParam = (url, name, value) => {
 	var splitIndex = url.indexOf("?") + 1;
 	var paramStr = url.substr(splitIndex, url.length);
 
@@ -349,7 +377,7 @@ var setUrlParam = (url, name, value) => {
 	return newUrl;
 };
 
-var randomStr = (length) => {
+const randomStr = (length) => {
 	var length = parseInt(length);
 	var str = '';
 	if (length / 25 >= 1) {
@@ -360,13 +388,13 @@ var randomStr = (length) => {
 	str += Math.random().toString(36).substr(2, length % 25);
 	return str;
 };
-var refash = () => {
+const refash = () => {
 	var url = window.location.href;
 	url = setUrlParam(url, 'randomStr', randomStr(5));
 	window.location.href = url;
 };
 
-var formatNumLength = (int, length) => {
+const formatNumLength = (int, length) => {
 	var intLength = int.toString().length;
 	var freeLength = length - intLength;
 	var fillStr = '';
@@ -375,7 +403,7 @@ var formatNumLength = (int, length) => {
 	}
 	return fillStr + int.toString();
 };
-var customFormatTime = (timeObject, format) => {
+const customFormatTime = (timeObject, format) => {
 
 	if (timeObject instanceof Date === false) {
 		return 'Error timeObject Type';
@@ -427,6 +455,7 @@ const pageData = {};
 
 pageData.menuArr = [
 {title: '登录', cb: showLogin},
+{title: '注册', cb: showRegister},
 ];
 pageData.userInfo = {};
 
@@ -435,18 +464,18 @@ var loginBoxProperty = {
 	title: '登录',
 	content: `
 	<div id="userLoginDom" class="userLoginDom">
-	<div class="inputGroup">
-	<div class="lable leftFloat">用户名:</div>
-	<div class="inputDom leftFloat">
-	<input class="inputBase" id="userLoginUserName" type="text" placeholder=""/>
-	</div>
-	</div>
-	<div class="inputGroup">
-	<div class="lable leftFloat">密码:</div>
-	<div class="inputDom leftFloat">
-	<input class="inputBase" id="userLoginUserPasswd" type="password" placeholder=""/>
-	</div>
-	</div>
+		<div class="inputGroup">
+			<div class="lable leftFloat">用户名:</div>
+			<div class="inputDom leftFloat">
+				<input class="inputBase line-indent" id="userLoginUserName" type="text" placeholder=""/>
+			</div>
+		</div>
+		<div class="inputGroup">
+			<div class="lable leftFloat">密码:</div>
+			<div class="inputDom leftFloat">
+				<input class="inputBase line-indent" id="userLoginUserPasswd" type="password" placeholder=""/>
+			</div>
+		</div>
 	</div>
 	`,
 	confirm: (e, next) => {
@@ -460,22 +489,162 @@ var loginBoxProperty = {
 				alert(err);
 				return;
 			}
-			pageData.userInfo = data;
-			document.dispatchEvent(userInfoReady);
 			alert('登录成功');
+			refash();
 			next();
 		});
 	}
 };
 
-var tipUserLogin = () => {
-	if (!/\/mobile\/index/.test(window.location.pathname)) {
-		window.location.href = 'index?tipLogin=true';
+const checkUserName = (str, title) => {
+	var result = "该用户名合法";
+	if ("" == str) {
+		result = title + "为空";
+		return result;
+	} else if ((str.length < 5) || (str.length > 20)) {
+		result = title + "必须为5 ~ 20位";
+		return result;
+	} else if (checkSpecialChar(str)) {
+		result = title + "不能含有特殊字符";
+		return result;
 	}
+	return result;
+};
+const checkSpecialChar = (str) => {
+	var arr = ["&", "\\", "/", "*", ">", "<", "@", "!"];
+	for (var i = 0; i < arr.length; i++) {
+		for (var j = 0; j < str.length; j++) {
+			if (arr[i] == str.charAt(j)) {
+				return true;
+			}
+		}
+	}   
+	return false;
+};
+var checkUserPasswd = () => {
+	var passwdReg = /^[A-Za-z0-9]{6,20}$/;
+	if (!passwdReg.test($('#userRegisterUserPasswd').val())) {
+		$('#passwdCheckResult').html("密码只能是6-20位字母数字组合");
+		return;
+	}
+	if ($('#userRegisterUserPasswd').val() != $('#userRegisterUserPasswdCheck').val()) {
+		$('#passwdCheckResult').html('密码两次输入不一致');
+		return;
+	}
+	$('#passwdCheckResult').html('');
+};
+var registerBox;
+var registerBoxProperty = {
+	title: '注册',
+	content: `
+	<div id="userRegisterDom" class="userLoginDom">
+		<div class="inputGroup">
+			<div class="lable leftFloat">用户名:</div>
+			<div class="inputDom leftFloat">
+				<input class="inputBase line-indent" id="userRegisterUserName" type="text" placeholder=""/>
+			</div>
+		</div>
+		<div class="inputGroup">
+			<div class="lable leftFloat">昵称:</div>
+			<div class="inputDom leftFloat">
+				<input class="inputBase line-indent" id="userRegisterNickName" type="text" placeholder=""/>
+			</div>
+		</div>
+		<div class="inputGroup">
+			<div class="lable leftFloat">密码:</div>
+			<div class="inputDom leftFloat">
+				<input class="inputBase line-indent" id="userRegisterUserPasswd" type="password" placeholder="" onkeyup="checkUserPasswd()"/>
+			</div>
+		</div>
+		<div class="inputGroup">
+			<div class="lable leftFloat">再次输入:</div>
+			<div class="inputDom leftFloat">
+				<input class="inputBase line-indent" id="userRegisterUserPasswdCheck" type="password" placeholder="" onkeyup="checkUserPasswd()"/>
+			</div>
+			<div id="passwdCheckResult" class="inputCheckResult"></div>
+		</div>
+		<div class="inputGroup">
+			<div class="lable leftFloat">验证码:</div>
+			<div class="inputDom leftFloat">
+				<input class="inputBase line-indent" id="userRegisterCaptcha" type="text" placeholder=""/>
+			</div>
+		</div>
+		<div class="inputGroup">
+			<div class="lable rightFloat">
+				<img src="${apiHosts}/captcha?timestamp=0" onclick="((e) => {
+					src = setUrlParam(this.src, 'timestamp', Date.now());
+					this.src = src;
+				})()"/>
+			</div>
+		</div>
+	</div>
+	`,
+	confirm: (e, next) => {
+		var registerData = {
+			userName: $('#userRegisterUserName').val(),
+			nickname: $('#userRegisterNickName').val(),
+			passwd: $('#userRegisterUserPasswd').val(),
+			passwdCheck: $('#userRegisterUserPasswdCheck').val(),
+			captcha: $('#userRegisterCaptcha').val()
+		};
+
+		var passwdReg = /^[A-Za-z0-9]{6,20}$/;
+		if (!passwdReg.test(registerData.passwd)) {
+			alert("密码只能是6-20位字母数字组合");
+			return;
+		}
+		if (registerData.passwd != registerData.passwdCheck) {
+			alert('密码两次输入不一致');
+			return;
+		}
+
+		var checkUserNameResult = checkUserName(registerData.userName, '用户名');
+		if (checkUserNameResult !== '该用户名合法') {
+			alert(checkUserNameResult);
+			return;
+		}
+
+		var checkNicknameResult = checkUserName(registerData.nickname, '昵称');
+		if (checkNicknameResult !== '该用户名合法') {
+			alert(checkNicknameResult);
+			return;
+		}
+
+		userRegister(registerData, (err, data) => {
+			if (err) {
+				alert(err);
+				return;
+			}
+			alert('注册成功');
+
+			var loginData = {
+				userName: registerData.userName,
+				passwd: registerData.passwd
+			};
+
+			userLogin(loginData, (err, data) => {
+				if (err) {
+					console.log(err);
+					return;
+				}
+				refash();
+				next();
+			});
+		});
+	}
+};
+
+const logout = () => {
+	userLogout(() => {
+		refash();
+	});
+};
+
+const tipUserLogin = () => {
 	showLogin();
 };
 
-var verifyLogin = () => {
+const verifyLogin = () => {
 	verifyLoginSession((err, data) => {
 		if (err) {
 			tipUserLogin();
@@ -492,6 +661,7 @@ var userInfoReady = new CustomEvent("userInfoReady", {});
 
 $(document).bind('userInfoReady', (e) => {
 	pageData.menuArr = [
+	{title: '登出', cb: logout},
 	{title: '资源上传', url: 'resourceUpload'},
 	{title: '资源提取', url: 'resourcePick'},
 	{title: '资源列表', url: 'resourceList'}
@@ -505,4 +675,5 @@ $('.head').ready(() => {
 	initMenu(pageData.menuArr);
 	verifyLogin();
 	loginBox = new ConfirmBox(loginBoxProperty);
+	registerBox = new ConfirmBox(registerBoxProperty);
 });

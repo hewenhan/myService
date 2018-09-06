@@ -106,11 +106,11 @@ this.setUserLoginSession = function (userInfo, cb) {
 			return;
 		}
 		redis.expire(redisLoginSessionKey, expire);
-		cb(null, { session: loginSession, expire: expire * 1000 });
+		cb(null, {session: loginSession, expire: expire * 1000});
 	});
 };
 
-this.getUseteLoginSession = function (session, cb) {
+this.getUserInfoByLoginSession = function (session, cb) {
 	var redisLoginSessionKey = `loginSession_${session}`;
 	redis.hGetAll(redisLoginSessionKey, (err, userInfo) => {
 		if (err) {
@@ -119,6 +119,11 @@ this.getUseteLoginSession = function (session, cb) {
 		}
 		cb(null, userInfo);
 	});
+};
+
+this.delUserLoginSession = function (session, cb) {
+	var redisLoginSessionKey = `loginSession_${session}`;
+	redis.del(redisLoginSessionKey, cb);
 };
 
 var crypto = require('crypto');
@@ -147,4 +152,53 @@ this.uploader = function (stream, suffix, cdn, cb) {
 		console.log(err);
 		cb(err);
 	});
+};
+
+var uaParser = require('ua-parser-js');
+this.updateUserLogin = (uid, ip, userAgent, cb) => {
+	var self = this;
+
+	var ua = uaParser(userAgent);
+
+	var updateUserLoginJson = {
+		tableName: 'service.user',
+		data: {
+			last_login_time: self.customFormatTime(new Date(), "%YYYY-%MM-%DD %hh:%mm:%ss"),
+			last_login_ip: ip,
+			user_agent: userAgent
+		},
+		where: {
+			id: uid
+		}
+	};
+
+	if (ua.device.model != null) {
+		updateUserLoginJson.data.device = ua.device.model;
+	}
+	if (ua.device.vendor != null) {
+		updateUserLoginJson.data.device_vendor = ua.device.vendor;
+	}
+	if (ua.device.type != null) {
+		updateUserLoginJson.data.device_type = ua.device.type;
+	}
+	if (ua.os.name != null && ua.os.version != null) {
+		updateUserLoginJson.data.os = ua.os.name;
+	}
+	if (ua.os.version != null) {
+		updateUserLoginJson.data.os_version = ua.os.version;
+	}
+	if (ua.engine.name != null) {
+		updateUserLoginJson.data.engine = ua.engine.name;
+	}
+	if (ua.engine.version != null) {
+		updateUserLoginJson.data.engine_version = ua.engine.version;
+	}
+	if (ua.browser.name != null) {
+		updateUserLoginJson.data.browser = ua.browser.name;
+	}
+	if (ua.browser.version != null) {
+		updateUserLoginJson.data.browser_version = ua.browser.version;
+	}
+
+	update(updateUserLoginJson, cb);
 };

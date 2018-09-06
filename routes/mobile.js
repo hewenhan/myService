@@ -28,7 +28,7 @@ var requireAuthentication = function (req, res, next) {
 		loginTip();
 		return;
 	}
-	common.getUseteLoginSession(req.cookies.loginSession, (err, userInfo) => {
+	common.getUserInfoByLoginSession(req.cookies.loginSession, (err, userInfo) => {
 		if (err) {
 			res.clearCookie('loginSession');
 			loginTip();

@@ -3,11 +3,12 @@ module.exports = (req, res, next) => {
 		"userName": "*",
 		"passwd": "*"
 	}, (rejected) => {
+		req.allParams.hashPasswd = crypto.createHash('sha256').update(req.allParams.passwd).digest('hex');
 		var selectJson = {
 			tableName: 'service.user',
 			where: {
 				name: req.allParams.userName,
-				password: req.allParams.passwd,
+				password: req.allParams.hashPasswd,
 				status: 1
 			},
 			limit: 1
@@ -25,6 +26,11 @@ module.exports = (req, res, next) => {
 			var userInfo = rows[0];
 			delete userInfo.password;
 
+			for (var i in userInfo) {
+				if (userInfo[i] == null) {
+					delete userInfo[i];
+				}
+			}
 			common.setUserLoginSession(userInfo, (err, sessionObj) => {
 				if (err) {
 					console.log(`SET SESSION ERROR`);

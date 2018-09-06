@@ -1,3 +1,6 @@
+crypto = require('crypto');
+fs = require('fs');
+co = require('co');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -5,11 +8,10 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var xmlParser = require('express-xml-bodyparser');
+var session = require('express-session');
 var fileUpload = require('express-fileupload');
 var sassMiddleware = require('node-sass-middleware');
 var OSS = require('ali-oss');
-fs = require('fs');
-co = require('co');
 
 __config = require('./config/config');
 weChatLib = require('./lib/weChatLib');
@@ -34,11 +36,21 @@ app.use(function (req, res, next) {
 	if (__config.allowCrossOriginArr.indexOf(req.headers.origin) >= 0) {
 		res.header('Access-Control-Allow-Origin', req.headers.origin);
 	}
-
+	if (req.headers['x-real-ip'] == null) {
+		req.headers['x-real-ip']  = req.ip.split(':')[3];
+	}
 	next();
 });
 app.use(logger('dev'));
 app.use(fileUpload());
+app.use(session({
+	secret: 'keyboard cat',
+	cookie: {
+		maxAge: 60000
+	},
+	resave: true,
+	saveUninitialized: true
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.text({ extended: false }));

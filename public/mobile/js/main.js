@@ -611,7 +611,7 @@ var registerBoxProperty = {
 			return;
 		}
 
-		tipUsrLisence();
+		// tipUsrLisence();
 
 		userRegister(registerData, (err, data) => {
 			if (err) {

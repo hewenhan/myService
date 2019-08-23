@@ -3,3 +3,6 @@ config/
 startApp.json
 logs/
 build
+package-lock.json
+public/mobile/css
+public/mobile/js

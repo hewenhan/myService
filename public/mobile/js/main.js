@@ -462,6 +462,7 @@ pageData.userInfo = {};
 var loginBox;
 var loginBoxProperty = {
 	title: '登录',
+	subTitle: `<div class="loginTipRegister"><a href="javascript:showRegister()">点击注册</a></div>`,
 	content: `
 	<div id="userLoginDom" class="userLoginDom">
 		<div class="inputGroup">
@@ -609,6 +610,8 @@ var registerBoxProperty = {
 			alert(checkNicknameResult);
 			return;
 		}
+
+		tipUsrLisence();
 
 		userRegister(registerData, (err, data) => {
 			if (err) {

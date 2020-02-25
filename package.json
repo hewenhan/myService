@@ -26,7 +26,7 @@
     "javascript-qrcode": "^1.0.7",
     "jssha": "^2.2.0",
     "md5": "^2.1.0",
-    "morgan": "^1.7.0",
+    "morgan": "^1.9.1",
     "mysql-pool-crud": "^1.1.7",
     "node-sass-middleware": "^0.11.0",
     "node-schedule": "^1.1.1",

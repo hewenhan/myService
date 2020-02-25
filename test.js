@@ -61,14 +61,16 @@ steamLib.getOwnedGames("76561198015962791", function (err, data) {
 
 // redis.delPatt('loginSession_*');
 
-var option = {
-	url: 'https://kg2.qq.com/node/play?s=P8TiHIPieBDWFPnV&shareuid=619b9a87222c35893c&topsource=a0_pn201001006_z1_u367271228_l1_t1534996455__',
-	headers: {
-		'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
-	}
-};
+for (var i = 0; i < 1; i++) {
+	var option = {
+		url: 'http://localhost:21232/assignedAdInfo?id=3',
+		// headers: {
+		// 	'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
+		// }
+	};
 
-reqHttp(option, (err, data) =>  {
-	console.log(err);
-	console.log(data);
-});
+	reqHttp(option, (err, data) =>  {
+		console.log(err);
+		console.log(data);
+	});
+}

@@ -195,6 +195,12 @@ const submitPrePage = (gasObj, cb) => {
 
 	var pageBandList = gasObj.bandList.splice(0,40);
 
+
+	if (pageBandList.length == 0) {
+		cb();
+		return;
+	}
+
 	gasObj.reqData["SpecParmBands[WNlow]"] = 9999999;
 	gasObj.reqData["SpecParmBands[WNup]"] = 0;
 	gasObj.reqData["SpecParmBands[bands]"] = '';
@@ -215,11 +221,7 @@ const submitPrePage = (gasObj, cb) => {
 	}
 
 	submitParams(gasObj, (err) => {
-		if (pageBandList.length != 0) {
-			submitPrePage(gasObj, cb);
-			return;
-		}
-		cb();
+		submitPrePage(gasObj, cb);
 	});
 };
 

@@ -193,7 +193,7 @@ const submitParams = (gasObj, cb) => {
 
 const submitPrePage = (gasObj, cb) => {
 
-	var pageBandList = gasObj.bandList.splice(0,5);
+	var pageBandList = gasObj.bandList.splice(0,40);
 
 	gasObj.reqData["SpecParmBands[WNlow]"] = 9999999;
 	gasObj.reqData["SpecParmBands[WNup]"] = 0;

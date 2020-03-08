@@ -87,7 +87,7 @@ var allCodeNum = 100;
 
 var saveCode = function (code, total, index) {
 	var logData = `${code}`;
-	var logFile = '../logs/generatedCode.js';
+	var logFile = './logs/generatedCode.js';
 	fs.appendFileSync(logFile, logData, {encoding: 'utf8', flag: 'a+'});
 	console.log(`${index}/${total}`);
 };

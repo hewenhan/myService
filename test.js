@@ -61,16 +61,23 @@ steamLib.getOwnedGames("76561198015962791", function (err, data) {
 
 // redis.delPatt('loginSession_*');
 
-for (var i = 0; i < 1; i++) {
-	var option = {
-		url: 'http://localhost:21232/assignedAdInfo?id=3',
-		// headers: {
-		// 	'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
-		// }
-	};
 
-	reqHttp(option, (err, data) =>  {
-		console.log(err);
-		console.log(data);
-	});
-}
+const cache = require('node-file-cache').create({
+	file: './objCache.js',
+	life: 31536000
+});
+
+const key = 'my-cache-key';
+// const item = {
+//     name: 'my cache item'
+// };
+// const options = {
+//     life: 60,   // set lifespan of one minute
+//     tags: [ 'my-cache-tag', 'another-tag' ]
+// };
+
+cache.set(key, "item");
+
+const cachedItem = cache.get(key);
+
+console.log(cachedItem);

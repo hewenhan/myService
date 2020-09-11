@@ -127,6 +127,12 @@ this.delUserLoginSession = function (session, cb) {
 };
 
 var crypto = require('crypto');
+this.generateRandomSha256Key = () => {
+	var shaObj = crypto.createHash('sha256');
+	shaObj.update(Date.now() + common.randomStr(5));
+	return shaObj.digest("HEX");
+};
+
 this.uploader = function (stream, suffix, cdn, cb) {
 	var co = require('co');
 	cb = cb || function () {};

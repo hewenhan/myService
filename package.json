@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "aes-js": "^2.0.0",
-    "ali-oss": "4.11.4",
+    "ali-oss": "^6.10.0",
     "async": "^1.0.0",
     "body-parser": "^1.15.1",
     "buffer-split": "^1.0.0",

@@ -667,7 +667,7 @@ $(document).bind('userInfoReady', (e) => {
 	{title: '登出', cb: logout},
 	// {title: '资源上传', url: 'resourceUpload'},
 	{title: '资源上传v2', url: 'resourceUploadV2'},
-	{title: '资源提取', url: 'resourcePick'},
+	// {title: '资源提取', url: 'resourcePick'},
 	{title: '资源列表', url: 'resourceList'}
 	];
 	initMenu(pageData.menuArr);

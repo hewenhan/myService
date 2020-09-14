@@ -162,7 +162,7 @@ button{
 	}
 }
 .tableList{
-	margin: 0 1rem;
+	margin: 1rem 1rem;
 	// background: $color-deep1;
 	font-size: 0.9rem;
 	.tableCell{
@@ -177,6 +177,7 @@ button{
 	.tableLineCell2{
 		width: 25%;
 		height: 100%;
+		overflow: hidden;
 	}
 	.tableLineCell3{
 		width: 50%;

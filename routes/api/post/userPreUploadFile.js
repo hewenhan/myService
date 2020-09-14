@@ -17,7 +17,6 @@ var insertUserResource = (req, res) => {
 			return;
 		}
 		res.thisData.result.url = req.allParams.url;
-		res.thisData.result.reapeat = true;
 		res.success(res.thisData.result);
 	});
 };
@@ -50,6 +49,7 @@ var checkFileRepeat = (req, res) => {
 			return;
 		}
 		req.allParams.url = rows[0].url;
+		res.thisData.result.reapeat = true;
 		insertUserResource(req, res);
 	});
 };

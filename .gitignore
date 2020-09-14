@@ -5,5 +5,4 @@ logs/
 build
 package-lock.json
 public/mobile/css
-public/mobile/js
 objCache.json

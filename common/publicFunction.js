@@ -98,7 +98,7 @@ this.setUserLoginSession = function (userInfo, cb) {
 	var loginSession = `${common.randomStr(5)}${Date.now()}`;
 	var redisLoginSessionKey = `loginSession_${loginSession}`;
 
-	var expire = 3600;
+	var expire = 86400;
 
 	redis.hSetObj(redisLoginSessionKey, userInfo, (err) => {
 		if (err) {

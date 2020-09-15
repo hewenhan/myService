@@ -22,6 +22,51 @@ var initCopyResourceUrl = (btnSelector, resourceId) => {
 	});
 };
 
+var convertFileSize = (fileObj) => {
+	if (fileObj.fileSize < 100) {
+		fileObj.fileSize = Math.round(fileObj.fileSize * 100) / 100
+		return;
+	}
+	fileObj.fileSize = fileObj.fileSize / 1024;
+	switch (fileObj.fileSizeUnit) {
+		case 'B':
+		fileObj.fileSizeUnit = 'KB';
+		break;
+
+		case 'KB':
+		fileObj.fileSizeUnit = 'MB';
+		break;
+		
+		case 'MB':
+		fileObj.fileSizeUnit = 'GB';
+		break;
+		
+		case 'GB':
+		fileObj.fileSizeUnit = 'TB';
+		break;
+		
+		case 'TB':
+		fileObj.fileSizeUnit = 'PB';
+		break;
+		
+		case 'PB':
+		fileObj.fileSizeUnit = 'EB';
+		break;
+	}
+	return convertFileSize(fileObj);
+};
+
+var updateUploadFileStat = () => {
+	var listLength = Object.keys(uploadFileList).length;
+	var uploadedLenght = 0;
+
+	for (var i in uploadFileList) {
+		if (uploadFileList[i].uploadStat == 'uploaded') {
+			uploadedLenght ++;
+		}
+	}
+	$('#fileListStat').html(`${uploadedLenght}/${listLength}`);
+};
 var processInputUploadFile = (file) => {
 	var uploadFileId = randomStr(5);
 	uploadFileList[uploadFileId] = {
@@ -30,9 +75,12 @@ var processInputUploadFile = (file) => {
 		file: file,
 		mimeType: file.type,
 		localSrc: blob.createObjectURL(file),
-		isUpload: false
-	}
-
+		uploadStat: 'wait', // wait, uploading, uploaded, failed
+		fileSize: file.size,
+		fileSizeUnit: 'B'
+	};
+	updateUploadFileStat();
+	convertFileSize(uploadFileList[uploadFileId]);
 	var reader = new FileReader();
 	reader.onload = function (e) {
 		var hash = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(this.result));
@@ -70,9 +118,14 @@ var processInputUploadFile = (file) => {
 	</div>
 	<div class="tableLine">
 	<div class="tableTitle">资源类型</div>
-	<div class="tableLineCell2">${uploadFileList[uploadFileId].mimeType}</div>
-	<div class="tableTitle">上传状态</div>
-	<div class="tableLineCell2 uploadStat">未上传</div>
+	<div class="tableLineCell1">${uploadFileList[uploadFileId].mimeType}</div>
+	</div>
+	<div class="tableLine">
+	<div class="tableTitle uploadStat">未上传</div>
+	<div class="tableLineCell1 uploadProgress">
+	<div class="progressBar"></div>
+	<div class="progressPresent">0/${uploadFileList[uploadFileId].fileSize}${uploadFileList[uploadFileId].fileSizeUnit}<br>0.00%</div>
+	</div>
 	</div>
 	<div class="tableLine">
 	<div class="tableTitle">资源地址</div>
@@ -119,19 +172,33 @@ var notifyUploadSuccess = (fileObj) => {
 		}
 		$(`#uploadFileInfo_${fileObj.uploadFileId} .uploadStat`).html('上传完成');
 		$(`#uploadFileInfo_${fileObj.uploadFileId} .resourceUrl`).html(fileObj.url);
+		$(`#uploadFileInfo_${fileObj.uploadFileId} .progressPresent`).html(`${fileObj.fileSize}/${fileObj.fileSize}${fileObj.fileSizeUnit}<br>100%`);
+		$(`#uploadFileInfo_${fileObj.uploadFileId} .progressBar`).css({ opacity: 1, width: '100%' });
+		fileObj.uploadStat = 'uploaded';
+		updateUploadFileStat();
 	});
 };
 
 var uploadFileToOss = (fileObj) => {
 	$(`#uploadFileInfo_${fileObj.uploadFileId} .uploadStat`).html('上传中');
-	client.multipartUpload(fileObj.storeAs, fileObj.file).then(function (result) {
+	client.multipartUpload(fileObj.storeAs, fileObj.file, {
+		progress: function (p, checkpoint) {
+			var present = (p * 100).toFixed(2) * 1;
+			var currentUploadSize = (p * fileObj.fileSize).toFixed(2);
+			var progressVal = `${currentUploadSize}/${fileObj.fileSize}${fileObj.fileSizeUnit}`
+			var opacity = (Math.round((0.5 + p / 2) * 100) / 100).toFixed(2);
+			$(`#uploadFileInfo_${fileObj.uploadFileId} .progressPresent`).html(`${progressVal}<br>${present}%`);
+			$(`#uploadFileInfo_${fileObj.uploadFileId} .progressBar`).css({ opacity: opacity, width: present });
+		}
+	}).then(function (result) {
 		notifyUploadSuccess(fileObj);
 		console.log(result);
 	}).catch(function (err) {
 		alert('上传失败');
 		console.log(err);
-		fileObj.isUpload = false;
+		fileObj.uploadStat = 'failed';
 		$(`#uploadFileInfo_${fileObj.uploadFileId} .uploadStat`).html('上传失败');
+		updateUploadFileStat();
 	});
 };
 
@@ -158,13 +225,26 @@ var getPreUploadFileInfo = (fileObj) => {
 	});
 };
 
+var uploadAllFiles = () => {
+	for (var i in uploadFileList) {
+		if (uploadFileList[i].uploadStat == 'uploaded' || uploadFileList[i].uploadStat == 'uploading') {
+			continue;
+		}
+		uploadFileFn(i);
+	}
+};
+
 var uploadFileFn = (uploadFileId) => {
 	var fileObj = uploadFileList[uploadFileId]
-	if (fileObj.isUpload) {
-		alert('文件上传中或已上传完成');
+	if (fileObj.uploadStat == 'uploading') {
+		alert(fileObj.fileName + '文件上传中');
 		return;
 	}
-	fileObj.isUpload = true;
+	if (fileObj.uploadStat == 'uploaded') {
+		alert(fileObj.fileName + '文件已上传完成');
+		return;
+	}
+	fileObj.uploadStat = 'uploading';
 	getPreUploadFileInfo(fileObj);
 };
 

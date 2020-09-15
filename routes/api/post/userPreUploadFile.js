@@ -34,7 +34,8 @@ var checkFileRepeat = (req, res) => {
 		tableName: 'service.user_resource',
 		field: ['url'],
 		where: {
-			md5: req.allParams.md5
+			md5: req.allParams.md5,
+			status: 1
 		},
 		limit: 1
 	};

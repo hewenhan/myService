@@ -12,7 +12,9 @@
 	<%- globalHtmlBodyHeadTag %>
 	<div class="content">
 		<div class="fileuploadDom">
-			<div class="btn" id="uploadBtn">选择文件</div>
+			<div class="btn uploadBtnClass" id="uploadBtn">选择文件</div>
+			<div class="btn uploadBtnClass" onclick="uploadAllFiles()">全部上传</div>
+			<div class="lable uploadBtnClass" id="fileListStat">0/0</div>
 			<input type="file" id="fileInput" class="fileInput" multiple="multiple"/>
 		</div>
 		<div class="tableList" id="uploadFileListId">

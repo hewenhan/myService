@@ -44,6 +44,26 @@ var initCopyResourceUrl = (btnSelector, resourceId) => {
 	});
 };
 
+var deleteResource = (resourceId) => {
+	var resourceNameDom = $(`#resourceId_${resourceId} .resourceName`);
+	var resourceName = resourceNameDom.html();
+	console.log(resourceName);
+
+	if (!confirm('删除资源:\n' + resourceName + '\n您确定吗？\n您资源列表中的所有相同资源都会被删除哦！\n(资源对比已资源的md5值为准)')) {
+		return;
+	}
+
+	deleteResourceReq(resourceId, (err, data) => {
+		if (err) {
+			alert(err);
+			return;
+		}
+
+		alert(resourceName + ' 已经删除完成');
+		refash();
+	});
+};
+
 var downloadResource = (resourceId) => {
 	var resourceUrlDom = $(`#resourceId_${resourceId} .resourceUrl`);
 	var url = resourceUrlDom.html();
@@ -87,7 +107,7 @@ var getResourceList = (startId) => {
 				<div onclick="showResourceDescription(${resource.id})">
 				<div class="tableLine">
 				<div class="tableTitle">资源名</div>
-				<div class="tableLineCell1">${resource.filename}</div>
+				<div class="tableLineCell1 resourceName">${resource.filename}</div>
 				</div>
 				<div class="tableLine">
 				<div class="tableTitle">资源类型</div>
@@ -103,7 +123,8 @@ var getResourceList = (startId) => {
 				</div>
 				<div class="tableLine">
 				<div class="tableTitle">上传时间</div>
-				<div class="tableLineCell1">${customFormatTime(new Date(resource.create_time), '%YYYY-%MM-%DD %hh:%mm:%ss')}</div>
+				<div class="tableLineCell3">${customFormatTime(new Date(resource.create_time), '%YYYY-%MM-%DD %hh:%mm:%ss')}</div>
+				<div class="tableTitle" onclick="deleteResource(${resource.id})">删除资源</div>
 				</div>
 				</div>
 				<div id="resourceDescriptionId_${resource.id}" class='resourceDescriptionDom'>

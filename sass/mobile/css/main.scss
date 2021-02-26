@@ -193,6 +193,13 @@ button{
 		box-shadow: 1px 1px 5px $color-deep3;
 		background: $color-deep1;
 	}
+	.tableLineAlpha{
+		width: 100%;
+		overflow: hidden;
+		height: 2rem;
+		line-height: 2rem;
+		background: none
+	}
 
 	.tableTitle{
 		width: 25%;

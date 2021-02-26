@@ -123,6 +123,16 @@ const getUserResourcePage = (startId, cb) => {
 	});
 };
 
+const deleteResourceReq = (resourceId, cb) => {
+	requestApi('userDeleteResource', {resourceId: resourceId}, (err, data) => {
+		if (err) {
+			cb(err);
+			return;
+		}
+		cb(null, data);
+	});
+};
+
 const userLogin = (loginData, cb) => {
 	requestApi('login', loginData, (err, data) => {
 		if (err) {

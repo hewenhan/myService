@@ -124,7 +124,7 @@ var getResourceList = (startId) => {
 				<div class="tableLine">
 				<div class="tableTitle">上传时间</div>
 				<div class="tableLineCell3">${customFormatTime(new Date(resource.create_time), '%YYYY-%MM-%DD %hh:%mm:%ss')}</div>
-				<div class="tableTitle" onclick="deleteResource(${resource.id})">删除资源</div>
+				<div class="tableTitle pointer" onclick="deleteResource(${resource.id})">删除资源</div>
 				</div>
 				</div>
 				<div id="resourceDescriptionId_${resource.id}" class='resourceDescriptionDom'>

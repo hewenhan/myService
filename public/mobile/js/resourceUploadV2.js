@@ -188,7 +188,7 @@ var uploadFileToOss = (fileObj) => {
 			var progressVal = `${currentUploadSize}/${fileObj.fileSize}${fileObj.fileSizeUnit}`
 			var opacity = (Math.round((0.5 + p / 2) * 100) / 100).toFixed(2);
 			$(`#uploadFileInfo_${fileObj.uploadFileId} .progressPresent`).html(`${progressVal}<br>${present}%`);
-			$(`#uploadFileInfo_${fileObj.uploadFileId} .progressBar`).css({ opacity: opacity, width: present });
+			$(`#uploadFileInfo_${fileObj.uploadFileId} .progressBar`).css({ opacity: opacity, width: present + '%' });
 		}
 	}).then(function (result) {
 		notifyUploadSuccess(fileObj);

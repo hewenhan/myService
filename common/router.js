@@ -14,6 +14,10 @@ this.createRoutePath = function (method, dir, router, filter) {
 			continue;
 		}
 
+		if (!/\.js$/.test(filesArr[i])) {
+			continue;
+		}
+
 		var fileName = '/' + filesArr[i].replace(/\.js$/, "");
 		var routePath = dir + fileName;
 		var path = '';

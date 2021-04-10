@@ -6,13 +6,13 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "@haileybot/captcha-generator": "^1.7.0",
     "aes-js": "^2.0.0",
     "ali-oss": "^6.10.0",
     "async": "^1.0.0",
     "body-parser": "^1.15.1",
     "buffer-split": "^1.0.0",
     "buffer-to-stream": "^1.0.0",
-    "canvas-captcha": "^3.0.1",
     "co": "^4.6.0",
     "cookie-parser": "^1.4.3",
     "crc": "^3.5.0",

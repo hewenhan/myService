@@ -581,7 +581,7 @@ var registerBoxProperty = {
 			</div>
 		</div>
 		<div class="inputGroup">
-			<div class="lable rightFloat">
+			<div class="lable captchaDom rightFloat">
 				<img src="${apiHosts}/captcha?timestamp=0" onclick="((e) => {
 					src = setUrlParam(this.src, 'timestamp', Date.now());
 					this.src = src;

@@ -21,16 +21,24 @@ var saveLog = function (msg) {
 };
 
 const playListArr = [
-['1','Flickering','Turbo Knight & Vosto','https://static.hewenhan.me/userFiles/eb2e954be3e66873fa0fd67432eb142fbfa1c899bfff368928513dbe778cf6cf.mp3'],
-['2','Celestial','Turbo Knight & Vosto','https://static.hewenhan.me/userFiles/2dd921cbc60cdb3d7061e2dd21907264e603cd9e16687a7024d4a26efed88d70.mp3'],
-['3','Souyz Astronaut','Turbo Knight & Vosto & Dane Whisper','https://static.hewenhan.me/userFiles/8ddc5e6fab30cec39dbe06dde7f12bb0ac90c4ca175e22083472fffbdf4254e1.mp3'],
-['4','2029','Turbo Knight & Vosto','https://static.hewenhan.me/userFiles/9f13065849fb4e2dbd057e9609f1a3906d6c76764b3d422181f906b82c317999.mp3'],
-['5','Stranger Quarks','Turbo Knight & Vosto','https://static.hewenhan.me/userFiles/5aff338004616075a6530272f2023aa0109f754bc726a133ee616794666575d5.mp3'],
+['01', '地道战叙事曲 (板胡独奏)', '沈立良', 'https://static.hewenhan.me/userFiles/a5858ed0bdc8e1c2684cbf9525feff0608f62be3fd863040b66fdb3dae3736d1'],
+['02', '猪八戒背媳妇 (板胡独奏)', '沈立良', 'https://static.hewenhan.me/userFiles/ce7295a886b9add64a8d33566967efe47b481066422a16661a833341b50dfb1b'],
+['03', '秦腔牌子曲 (板胡独奏)', '沈立良', 'https://static.hewenhan.me/userFiles/ca3d57c8d63883e77e639c6e6eecad182b5e938d93fbed4c53256197e1149fe7'],
+['04', '大起板 (板胡独奏)', '沈立良', 'https://static.hewenhan.me/userFiles/4bae232844094994000cd987506f59283ae7ecf57ccd14779091a1325d6b544f'],
+['05', '舟山渔歌 (板胡独奏)', '沈立良', 'https://static.hewenhan.me/userFiles/ff1c7df4b0d373e4f6c9bfe804339d3f82c92bab394e7c43fe996d12c91875a8'],
+['06', '翻身道情 (板胡独奏)', '沈立良', 'https://static.hewenhan.me/userFiles/5aa4874f98f2d3f103670ebf947d28c77c0a61bbe9679004f2c38dba33ee3e88'],
+['07', '云雀 (板胡独奏)', '沈立良', 'https://static.hewenhan.me/userFiles/5d6576a018f8a85cfba388f610c12cd231f515f2976e4a9fe9fa40dbeb3fe67b'],
+['08', '山东小曲 (板胡独奏)', '沈立良', 'https://static.hewenhan.me/userFiles/ce84059d354c5d19127013e7f7310924ed023a0e71c974a2028fc30ba401aeb2'],
+['09', '红军哥哥回来了 (板胡独奏)', '沈立良', 'https://static.hewenhan.me/userFiles/bf1da323b0edd817bc01a3e2af13ed90ec98d4292d6982dad31f5711c75f48dc'],
+['10', '锄禾曲 (板胡独奏)', '沈立良', 'https://static.hewenhan.me/userFiles/67d57d9a57c83f07a306cb5c2f7e6ec0e252319ffbb5f2a372b5c4a1e648fbb5'],
+['11', '三个和尚 (板胡独奏)', '沈立良', 'https://static.hewenhan.me/userFiles/c74780e6c9d52ea137480e0ad9677cd4a24655c50e5867dccd7fe63b86733e85'],
+['12', '大姑娘美 (板胡独奏)', '沈立良', 'https://static.hewenhan.me/userFiles/8024051c69081cbf6edd2cc3dfb613aa4d8c45a8a491395d0ef495ddd83dfdfd'],
+['13', '翻身的日子 (板胡独奏)', '沈立良', 'https://static.hewenhan.me/userFiles/68136f0fcf60e84854442cd3c6c3c9e15a074f44eaeffd22903a7397b8a69b70']
 ];
 
 const postConfig = {
-	artworkId: 584,
-	coverUrl: 'https://blog.hewenhan.me/wp-content/uploads/2021/04/XiKl8XZpJ3xmO1i2-300x300.jpg'
+	artworkId: 890,
+	coverUrl: 'https://blog.hewenhan.me/wp-content/uploads/2021/04/cover-225x225.jpeg'
 };
 
 const buildTrackObj = (indexNum, title, artist, audioUrl) => {
@@ -53,9 +61,9 @@ const buildTrackObj = (indexNum, title, artist, audioUrl) => {
 };
 
 const trackData = {
-	'post_id': '583',
+	'post_id': '889',
 	tracks: [],
-	'nonce': 'e2778de40c',
+	'nonce': '1377d5d950',
 	'action': 'cue_save_playlist_tracks'
 };
 
@@ -87,7 +95,7 @@ const postPlaylist = () => {
 			'Sec-Fetch-Dest': 'empty',
 			'Referer': 'https://blog.hewenhan.me/wp-admin/post.php?post=532&action=edit',
 			'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,hu;q=0.7,und;q=0.6,es;q=0.5',
-			'Cookie': 'wordpress_sec_897ef85a8ea4c70983bcf6e8f38b9de0=hewenhan%7C1618653247%7CfDcMG57zHrZv92jYdVjB7Kwvt28xO1Vg6Wb3afagSWc%7C36e753c221857ac35929c4c14d478581476148e6745fb419c30a936e8b38ca70; wordpress_sec_d7f3078bf68ac0df50c4030b830c2a4f=hewenhan%7C1619185776%7CffDPsOBTHkDWTVq2faF8E4CLZVCXJ6sz24UiKwMw2iq%7C8f0eb59c38ca07fcdd69e8791aa31a7fa48b3d57a477cf37a84c8ff07b834d90; wordpress_logged_in_897ef85a8ea4c70983bcf6e8f38b9de0=hewenhan%7C1618653247%7CfDcMG57zHrZv92jYdVjB7Kwvt28xO1Vg6Wb3afagSWc%7Cef114d731313b4e05c497df8ada091ff24038a34bf2ce1a2fd492f6768d59edc; wordpress_logged_in_d7f3078bf68ac0df50c4030b830c2a4f=hewenhan%7C1619185776%7CffDPsOBTHkDWTVq2faF8E4CLZVCXJ6sz24UiKwMw2iq%7Cf7fb356efd6126c35d10d6938e2813f84d478a3171a149ac7fb72e619bb896a4; PHPSESSID=phm9k2rvq20raamftqd3mmajn1; Hm_lvt_37f30ee02580e891765c04f25597bc41=1617880044,1617942047,1618048524,1618049907; Hm_lpvt_37f30ee02580e891765c04f25597bc41=1618049907; Hm_lvt_880880fed08ec77c107a5711d9bfa1c9=1617880044,1617942047,1618048524,1618049907; Hm_lpvt_880880fed08ec77c107a5711d9bfa1c9=1618049907; wp-settings-time-1=1618049976; wp-settings-1=libraryContent%3Dbrowse%26editor%3Dhtml%26hidetb%3D1%26post_dfw%3Doff%26mfold%3Do%26posts_list_mode%3Dlist%26urlbutton%3Dnone'
+			'Cookie': 'wordpress_sec_d7f3078bf68ac0df50c4030b830c2a4f=hewenhan%7C1620414826%7CPClNShPM5Fe2PUDEAj01gKDhyr922zmi4S6iLpMR5rO%7C51ea2aa54e8ee0abfa7c598a0d0218a9524542b034580c2e9c70c5fcf6d06a67; Hm_lvt_880880fed08ec77c107a5711d9bfa1c9=1618164152,1618164343,1618164488,1618164506; wordpress_logged_in_d7f3078bf68ac0df50c4030b830c2a4f=hewenhan%7C1620414826%7CPClNShPM5Fe2PUDEAj01gKDhyr922zmi4S6iLpMR5rO%7C9abb006a513d6bcaac381cafa12f8cc63bc6450eb7c0af8609c765e73bf8c36f; PHPSESSID=3onqc74e0p7sceuvluvg8q6b92; Hm_lvt_37f30ee02580e891765c04f25597bc41=1619196696,1619205203,1619243014,1619287741; Hm_lpvt_37f30ee02580e891765c04f25597bc41=1619287741; wp-settings-time-1=1619287779; wp-settings-1=libraryContent%3Dbrowse%26editor%3Dhtml%26hidetb%3D0%26post_dfw%3Doff%26mfold%3Do%26posts_list_mode%3Dlist%26urlbutton%3Dnone'
 		}
 	};
 

@@ -2,14 +2,13 @@ const rejectBadRequest = (req, res) => {
 	res.status(403);
 	res.error("DON'T PLAY WITH ME!!");
 	console.log("BED CDN REQUEST ERROR");
+	console.log("CDN AUTH HEADERS");
+	console.log(req.headers);
+	console.log("CDN AUTH PARAMS");
+	console.log(req.allParams);
 };
 
 module.exports = (req, res, next) => {
-	console.log("CDN AUTH HEADERS");
-	console.log(req.headers);
-
-	console.log("CDN AUTH PARAMS");
-	console.log(req.allParams);
 
 	var ua = req.headers['user-agent'].trim().toLowerCase();
 

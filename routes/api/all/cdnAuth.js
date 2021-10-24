@@ -1,3 +1,9 @@
+const rejectBadRequest = (req, res) => {
+	res.status(403);
+	res.error("DON'T PLAY WITH ME!!");
+	console.log("BED CDN REQUEST ERROR");
+};
+
 module.exports = (req, res, next) => {
 	console.log("CDN AUTH HEADERS");
 	console.log(req.headers);
@@ -8,8 +14,7 @@ module.exports = (req, res, next) => {
 	var ua = req.headers['user-agent'].trim().toLowerCase();
 
 	if (ua == "") {
-		res.status(403);
-		res.error("DON'T PLAY WITH ME!!");
+		rejectBadRequest(req, res);
 		return;
 	}
 	if (/linux/g.test(ua)) {
@@ -28,6 +33,5 @@ module.exports = (req, res, next) => {
 		res.success();
 		return;
 	}
-	res.status(403);
-	res.error("DON'T PLAY WITH ME!!");
+	rejectBadRequest(req, res);
 };

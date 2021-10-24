@@ -8,7 +8,7 @@ module.exports = (req, res, next) => {
 	var ua = req.headers['user-agent'].trim().toLowerCase();
 
 	if (ua == "") {
-		res.status(404);
+		res.status(403);
 		res.error("DON'T PLAY WITH ME!!");
 		return;
 	}
@@ -28,6 +28,6 @@ module.exports = (req, res, next) => {
 		res.success();
 		return;
 	}
-	res.status(404);
+	res.status(403);
 	res.error("DON'T PLAY WITH ME!!");
 };

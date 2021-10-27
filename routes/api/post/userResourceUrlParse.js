@@ -1,5 +1,6 @@
-var urlParse = require('url');
-var htmlparser = require("htmlparser2");
+var urlParse   = require('url');
+var htmlparser = require('htmlparser2');
+var util       = require('util');
 
 var insertOrUpdateUserResource = (req, res) => {
 	var insertOrUpdateUserResourceJson = {
@@ -140,6 +141,82 @@ var parseQuanMinKGeResource = (req, res) => {
 	});
 };
 
+var parseDouYinResource = (req, res) => {
+	var options = {
+		url: req.allParams.urlParse.href,
+		headers: {
+			'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36',
+			'Cookie': 'douyin.com; __ac_nonce=06178c21b00b97f65ea0b; __ac_signature=_02B4Z6wo00f01rQ.GSAAAIDD3XH-USUxcX60Hx2AAMyD53; ttcid=148f76a177014b459ad5d62fa670de3922; ttwid=1%7CYk3-rMHhe56rmo0xG2QvScRZ5z9L8RJQ9fE5mm1X4qM%7C1635303963%7C36c129f9cf73acb5f72dabebfc5fbb7cedf88b3cc7326e30f72b2effc3b1b8a5; _tea_utm_cache_6383=undefined; MONITOR_WEB_ID=9955a71e-3c7f-4942-bca6-92f19baaa1e6; passport_csrf_token_default=a34da08a109ff691fbf46e3572ed797f; passport_csrf_token=a34da08a109ff691fbf46e3572ed797f; _tea_utm_cache_1300=undefined; s_v_web_id=verify_kv8xrb4c_2q5L6c0o_gTzW_4FTV_ARcm_AsXYMb3lvYtL; tt_scid=zWJjVJCAadg05fB1MqIwM2loCH8T7x7ohbNJEdRssJd2Z4gL3C--sWZnes9BNvQad86b; msToken=incOcNSZ6n7lS-VUW4eX3BtqYvKmSI7hXNnzB6giUjAB5Uhzg6VkpPR5s0UpzsCFcszlA-CEZKvsP-eyxOgHo_3ch4gFJ3if1gUApWTa5O3TqBDxE_UP9uk='
+		}
+	};
+	reqHttp(options, (err, data) => {
+		if (req.allParams.retryCount == null) {
+			req.allParams.retryCount = 0;
+		}
+		if (req.allParams.retryCount > 5) {
+			res.error('资源解析尝试5次错误，请检查链接有效性');
+			return;
+		}
+		try {
+			// console.log(typeof(data));
+			// console.log('/////////////////////');
+			// console.log(data);
+			// console.log('/////////////////////');
+
+			if (typeof(data) == 'object') {
+				req.allParams.urlParse.href = data.href;
+				req.allParams.retryCount++;
+				parseDouYinResource(req, res);
+				return;
+			}
+			if (data.length <= 1024) {
+				var reg = />.*</;
+				req.allParams.urlParse.href = reg.exec(data)[0].replace('>', '').replace('<', '')
+				req.allParams.retryCount++;
+				parseDouYinResource(req, res);
+				return;
+			}
+
+			var start = false;
+			var success = false;
+
+			var parser = new htmlparser.Parser({
+				onopentag: (tagname, attribs) => {
+					if(tagname === "script" && attribs.id === 'RENDER_DATA' && !success){
+						start = true;
+					}
+				},
+				ontext: (text) => {
+					if (start && !success) {
+						success                          = true;
+						var mediaInfo                    = JSON.parse(decodeURIComponent(text));
+						mediaInfo                        = mediaInfo.C_20.aweme.detail;
+						req.allParams.result.name        = mediaInfo.desc;
+						req.allParams.result.artist      = mediaInfo.authorInfo.nickname;
+						req.allParams.result.resourceUrl = mediaInfo.download.url;
+					}
+				},
+				onclosetag: (tagname) => {
+					// console.log(catchHtml);
+				}
+			}, {decodeEntities: true});
+			parser.write(data);
+			parser.end();
+
+			if (req.allParams.result.name && req.allParams.result.artist && req.allParams.result.resourceUrl) {
+				req.allParams.result.mimetype = 'video/mp4';
+				insertOrUpdateUserResource(req, res);
+				return;
+			}
+
+			throw "Non Resource"
+		} catch (e) {
+			console.log(e);
+			res.error('资源解析错误，请检查链接有效性');
+		}
+	});
+};
+
 var switchResource = (req, res) => {
 	console.log(req.allParams);
 	req.allParams.result.description = req.allParams.urlParse.host;
@@ -147,8 +224,8 @@ var switchResource = (req, res) => {
 		case 'changba.com':
 
 		parseChangbaResource(req, res);
-
 		break;
+
 		case 'kg.qq.com':
 		case 'kg1.qq.com':
 		case 'kg2.qq.com':
@@ -162,8 +239,15 @@ var switchResource = (req, res) => {
 		case 'node.kg.qq.com':
 
 		parseQuanMinKGeResource(req, res);
-
 		break;
+
+		case 'www.douyin.com':
+		case 'v.douyin.com':
+		case 'douyin.com':
+
+		parseDouYinResource(req, res);
+		break;
+
 		default:
 
 		res.error('未知资源类型');

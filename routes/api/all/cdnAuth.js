@@ -31,14 +31,15 @@ module.exports = (req, res, next) => {
 	if (/safari/g.test(ua)) {
 		res.success();
 		return;
+	}
 	if (/yisouspider/g.test(ua)) {
-                res.success();
-                return;
-        }}
+		res.success();
+		return;
+	}
 	if (/googlebot/g.test(ua)) {
-                res.success();
-                return;
-        }
+		res.success();
+		return;
+	}
 	
 
 	rejectBadRequest(req, res);

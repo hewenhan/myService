@@ -54,3 +54,22 @@ domEventBind('click', '#parseResourceBtn', (e) => {
 domEventBind('click', '#putResourceBtn', (e) => {
 	storeUserResource();
 });
+
+
+// function loadDoc() {
+// 	xhttp = new XMLHttpRequest();
+// 	xhttp.responseType = 'blob';
+// 	xhttp.onreadystatechange = function() {
+// 		if (this.readyState == 4 && this.status == 200) {
+// 			console.log('111');
+// 		}
+// 	};
+// 	xhttp.open("GET", "https://static.hewenhan.me/userFiles/a877a4e0266a1c778951ea6dd3d3c450d9732ba8e75406b0101aba1f932bbd96.mp4", true);
+// 	xhttp.send();
+// }
+
+// var f = new File([xhttp.response], "hahha.mp4", {type: 'video/mp4', lastModified: new Date()})
+
+// uploadFileList.xid27.file = f
+
+// ...

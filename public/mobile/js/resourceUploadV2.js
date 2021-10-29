@@ -285,6 +285,10 @@ var uploadFileFn = (uploadFileId) => {
 		alert(fileObj.fileName + '文件已上传完成');
 		return;
 	}
+	if (fileObj.md5 == null) {
+		alert('md5 未计算完');
+		return;
+	}
 	fileObj.uploadStat = 'uploading';
 	getPreUploadFileInfo(fileObj);
 };

@@ -117,7 +117,7 @@ var processInputUploadFile = (file) => {
 	readFile(file, p => {
 		var present = (p * 100).toFixed(2) * 1;
 		var opacity = (Math.round((0.5 + p / 2) * 100) / 100).toFixed(2);
-		$(`#uploadFileInfo_${uploadFileList[uploadFileId].uploadFileId} .md5 .progressPresent`).html(`<br>${present}%`);
+		$(`#uploadFileInfo_${uploadFileList[uploadFileId].uploadFileId} .md5 .progressPresent`).html(`计算中...<br>${present}%`);
 		$(`#uploadFileInfo_${uploadFileList[uploadFileId].uploadFileId} .md5 .progressBar`).css({ opacity: opacity, width: present + '%' });
 	}).then(md5Hash => {
 		uploadFileList[uploadFileId].md5 = md5Hash;

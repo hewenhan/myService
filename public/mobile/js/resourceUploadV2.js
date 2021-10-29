@@ -4,114 +4,6 @@ if (!blob) {
 	console.log('Your browser does not support Blob URLs :(');
 }
 
-var readChunked = (file, chunkCallback, endCallback) => {
-	var fileSize   = file.size;
-	var chunkSize  = 4 * 1024 * 1024; // 4MB
-	var offset     = 0;
-
-	var reader = new FileReader();
-	reader.onload = () => {
-		if (reader.error) {
-			endCallback(reader.error || {});
-			return;
-		}
-		offset += reader.result.length;
-		// callback for handling read chunk
-		// TODO: handle errors
-		chunkCallback(reader.result, offset, fileSize); 
-		if (offset >= fileSize) {
-			endCallback(null);
-			return;
-		}
-		readNext();
-	};
-
-	reader.onerror = (err) => {
-		endCallback(err || {});
-	};
-
-	var readNext = () => {
-		var fileSlice = file.slice(offset, offset + chunkSize);
-		reader.readAsBinaryString(fileSlice);
-	}
-	readNext();
-};
-var getMD5 = (fileObj, cbProgress) => {
-	return new Promise((resolve, reject) => {
-		var md5 = CryptoJS.algo.MD5.create();
-		readChunked(fileObj, (chunk, offs, total) => {
-			md5.update(CryptoJS.enc.Latin1.parse(chunk));
-			if (cbProgress) {
-				cbProgress(offs / total);
-			}
-		}, err => {
-			if (err) {
-				reject(err);
-				return;
-			}
-
-			var hash = md5.finalize();
-			var hashHex = hash.toString(CryptoJS.enc.Hex);
-			resolve(hashHex);
-		});
-	});
-};
-
-var readChunkedBak = (file, cb) => {
-	var result = [];
-	var readFileSlice = (fileSlice) => {
-		var reader    = new FileReader();
-		reader.onload = () => {
-			if (reader.error) {
-				cb(reader.error || {});
-				return;
-			}
-			result.push(reader.result);
-			complateCount++;
-			console.log(complateCount);
-			if (complateCount >= partCount) {
-				cb(null, result);
-			}
-		};
-
-		reader.onerror = (err) => {
-			cb(err || {});
-		};
-		reader.readAsBinaryString(fileSlice);
-	};
-
-	var fileSize      = file.size;
-	var chunkSize     = 4 * 1024 * 1024; // 4MB
-	var complateCount = 0;
-	var partCount     = Math.ceil(fileSize / chunkSize);
-
-	for (var i = 0; i < partCount; i++) {
-		var offset    = i * chunkSize;
-		var end       = offset + chunkSize;
-		if (end > fileSize) {
-			end = fileSize;
-		}
-		console.log(fileSize);
-		console.log(end);
-		var fileSlice = file.slice(offset, end);
-		readFileSlice(fileSlice);
-	}
-};
-var getMD5Bak = (fileObj, cb) => {
-	var md5 = CryptoJS.algo.MD5.create();
-	readChunked(fileObj, (err, contentList) => {
-		// console.log(contentList);
-		for (var i = 0; i < contentList.length; i++) {
-			md5.update(CryptoJS.enc.Latin1.parse(contentList[i]));
-			cb((i + 1) / contentList.length);
-			// console.log((i + 1) / contentList.length);
-		}
-		var hash = md5.finalize();
-		var hashHex = hash.toString(CryptoJS.enc.Hex);
-		cb(1, hashHex);
-	});
-};
-
 var initCopyResourceUrl = (btnSelector, resourceId) => {
 	var resourceUrlDom = $(`#uploadFileInfo_${resourceId} .resourceUrl`);
 	var clipboard = new ClipboardJS(btnSelector, {
@@ -164,6 +56,38 @@ var convertFileSize = (fileObj) => {
 	return convertFileSize(fileObj);
 };
 
+const chunkSize = 4 * 1024 * 1024;
+var hashChunk = (chunk, hasher) => {
+	var fileReader = new FileReader();
+	return new Promise((resolve, reject) => {
+		fileReader.onload = async(e) => {
+			const view = new Uint8Array(e.target.result);
+			hasher.update(view);
+			resolve();
+		};
+
+		fileReader.readAsArrayBuffer(chunk);
+	});
+}
+const readFile = async(file, processCb) => {
+	var hasher = await hashwasm.createMD5();
+
+	const chunkNumber = Math.floor(file.size / chunkSize);
+
+	for (let i = 0; i <= chunkNumber; i++) {
+		const chunk = file.slice(
+			chunkSize * i,
+			Math.min(chunkSize * (i + 1), file.size)
+			);
+		await hashChunk(chunk, hasher);
+		var p = (i + 1) / (chunkNumber + 1);
+		processCb(p);
+	}
+
+	const hash = hasher.digest();
+	return Promise.resolve(hash);
+};
+
 var updateUploadFileStat = () => {
 	var listLength = Object.keys(uploadFileList).length;
 	var uploadedLenght = 0;
@@ -190,44 +114,17 @@ var processInputUploadFile = (file) => {
 	updateUploadFileStat();
 	convertFileSize(uploadFileList[uploadFileId]);
 
-	// getMD5(file, (p, md5Hash) => {
-	// 	var present = (p * 100).toFixed(2) * 1;
-	// 	var opacity = (Math.round((0.5 + p / 2) * 100) / 100).toFixed(2);
-	// 	$(`#uploadFileInfo_${uploadFileList[uploadFileId].uploadFileId} .md5 .progressPresent`).html(`<br>${present}%`);
-	// 	$(`#uploadFileInfo_${uploadFileList[uploadFileId].uploadFileId} .md5 .progressBar`).css({ opacity: opacity, width: present + '%' });
-
-	// 	if (md5Hash) {
-	// 		uploadFileList[uploadFileId].md5 = md5Hash;
-	// 		$(`#uploadFileInfo_${uploadFileId} .md5`).html(md5Hash);
-	// 	}
-	// });
-
-	getMD5(
-		file,
-		p => {
-			// console.log("Progress: " + prog * 100 + '%');
-			var present = (p * 100).toFixed(2) * 1;
-			var opacity = (Math.round((0.5 + p / 2) * 100) / 100).toFixed(2);
-			$(`#uploadFileInfo_${uploadFileList[uploadFileId].uploadFileId} .md5 .progressPresent`).html(`<br>${present}%`);
-			$(`#uploadFileInfo_${uploadFileList[uploadFileId].uploadFileId} .md5 .progressBar`).css({ opacity: opacity, width: present + '%' });
-		}
-	).then(
-		md5Hash => {
-			uploadFileList[uploadFileId].md5 = md5Hash;
-			$(`#uploadFileInfo_${uploadFileId} .md5`).html(md5Hash);
-		},
-		err => {
-			console.log(err)
-		}
-	);
-
-	// var reader = new FileReader();
-	// reader.onload = function (e) {
-	// 	var hash = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(this.result));
-	// 	uploadFileList[uploadFileId].md5 = hash.toString(CryptoJS.enc.Hex);
-	// 	$(`#uploadFileInfo_${uploadFileId} .md5`).html(uploadFileList[uploadFileId].md5)
-	// };
-	// reader.readAsBinaryString(file);
+	readFile(file, p => {
+		var present = (p * 100).toFixed(2) * 1;
+		var opacity = (Math.round((0.5 + p / 2) * 100) / 100).toFixed(2);
+		$(`#uploadFileInfo_${uploadFileList[uploadFileId].uploadFileId} .md5 .progressPresent`).html(`<br>${present}%`);
+		$(`#uploadFileInfo_${uploadFileList[uploadFileId].uploadFileId} .md5 .progressBar`).css({ opacity: opacity, width: present + '%' });
+	}).then(md5Hash => {
+		uploadFileList[uploadFileId].md5 = md5Hash;
+		$(`#uploadFileInfo_${uploadFileId} .md5`).html(md5Hash);
+	}).catch(err => {
+		console.error(err);
+	});
 
 	var mediaType = 'None';
 	var resourcePreviewHtml = `不支持的预览类型`;

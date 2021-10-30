@@ -1,6 +1,7 @@
 var urlParse   = require('url');
 var htmlparser = require('htmlparser2');
 var util       = require('util');
+const CryptoJS = require('crypto-js');
 
 var insertOrUpdateUserResource = (req, res) => {
 	var insertOrUpdateUserResourceJson = {
@@ -26,13 +27,27 @@ var insertOrUpdateUserResource = (req, res) => {
 	});
 };
 
+
+var parseChangbaUrlFn = (urlEncoded) => {
+	var d = String.fromCharCode.apply(String, [97, 49, 55, 102, 101, 55, 52, 101, 52, 50, 49, 99, 50, 99, 98, 102, 51, 100, 99, 51, 50, 51, 102, 52, 98, 52, 102, 51, 97, 49, 97, 102]);
+	var c = CryptoJS.enc.Utf8.parse(d.substring(0, 16));
+	var l = CryptoJS.enc.Utf8.parse(d.substring(16));
+	return CryptoJS.AES.decrypt(urlEncoded, l, {
+		iv: c,
+		padding: CryptoJS.pad.Pkcs7
+	}).toString(CryptoJS.enc.Utf8);
+};
 var parseChangbaResource = (req, res) => {
 	var options = {
-		url: req.allParams.urlParse.href
+		url: req.allParams.urlParse.href,
+		headers: {
+			'user-agent': 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36'
+		}
 	};
 	reqHttp(options, (err, data) => {
 		if (err) {
 			res.error('资源获取错误 ' + err);
+			console.log(data);
 			return;
 		}
 
@@ -44,11 +59,23 @@ var parseChangbaResource = (req, res) => {
 						req.allParams.result.name = desSplit[0];
 						req.allParams.result.artist = desSplit[1];
 					}
-					if(tagname === "body"){
-						req.allParams.result.resourceUrl = 'https://qiniuuwmp3.changba.com/' + attribs['data-workid'] + '.mp3';
-					}
+					// if(tagname === "body"){
+					// 	req.allParams.result.resourceUrl = 'https://qiniuuwmp3.changba.com/' + attribs['data-workid'] + '.mp3';
+					// }
+
+					// if (tagname === 'script') {
+					// 	console.log(tagname);
+					// }
 				},
 				ontext: (text) => {
+					var pat = /commonObj\.url.*;/
+					if (pat.test(text)) {
+						var urlEncoded                   = pat.exec(text)[0];
+						urlEncoded                       = urlEncoded.replace("commonObj.url = '", '');
+						urlEncoded                       = urlEncoded.replace("';", '');
+						var resourceUrl                  = parseChangbaUrlFn(urlEncoded);
+						req.allParams.result.resourceUrl = resourceUrl;
+					}
 				},
 				onclosetag: (tagname) => {
 
@@ -219,7 +246,7 @@ var parseDouYinResource = (req, res) => {
 
 var switchResource = (req, res) => {
 	console.log(req.allParams);
-	req.allParams.result.description = req.allParams.urlParse.host;
+	req.allParams.result.description = req.allParams.urlParse.href;
 	switch (req.allParams.urlParse.host) {
 		case 'changba.com':
 

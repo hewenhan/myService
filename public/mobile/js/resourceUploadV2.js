@@ -308,7 +308,50 @@ requestApi('requestStsInfo', {}, (err, data) => {
 	console.log(client);
 });
 
-var uploadFileList = {};
+const loadFileFromRemote = (remoteResource) => {
+	loadFromUrl(remoteResource.resourceUrl, blob => {
+		var file = new File([blob], remoteResource.name, {type: remoteResource.mimetype, lastModified: new Date()});
+		processInputUploadFile(file);
+	});
+};
+
+const checkRemoteResource = () => {
+	var remoteResourceList = jsonInSession('remoteResourceList');
+	if (!remoteResourceList) {
+		return;
+	}
+	if (remoteResourceList.length == 0) {
+		return;
+	}
+	for (var i = 0; i < remoteResourceList.length; i++) {
+		loadFileFromRemote(remoteResourceList[i]);
+	}
+	jsonInSession('remoteResourceList', []); 
+};
+
+const loadFromUrl = (url, cb) => {
+	var xhttp = new XMLHttpRequest();
+	xhttp.responseType = 'blob';
+	xhttp.onreadystatechange = function() {
+		console.log($('.content').append('<br>' + this.readyState));
+		if (this.readyState == 4 && this.status == 200) {
+			cb(xhttp.response);
+			return;
+		}
+		if (this.readyState == 4) {
+			alert('status: ' + this.status
+			+ '\nstatusText: '+ this.statusText
+			+ '\n跨域限制，禁止请求');
+		}
+	};
+
+	xhttp.open("GET", url, true);
+	xhttp.setRequestHeader('Referer', url)
+	xhttp.send();
+	
+}
+
+const uploadFileList = {};
 
 $(document).ready(() => {
 	document.getElementById('fileInput').addEventListener('change', function (e) {
@@ -321,4 +364,5 @@ $(document).ready(() => {
 		console.log(e);
 		$('#fileInput').click()
 	});
+	checkRemoteResource();
 });

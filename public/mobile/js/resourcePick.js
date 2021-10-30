@@ -1,4 +1,9 @@
 var resourceInfo;
+if (sessionStorage) {
+	if (!jsonInSession('remoteResourceList')) {
+		jsonInSession('remoteResourceList', []);
+	}
+}
 
 const showParseDone = () => {
 	var html = `艺术家: ${resourceInfo.artist}
@@ -12,8 +17,14 @@ const showParseDone = () => {
 	$('#parseStat').addClass('parseStatDone');
 };
 
+function httpString(s) {
+	var reg = /(https?|http|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/g;
+	s = s.match(reg);
+	return (s)
+}
 const parseResource = () => {
-	var url = $('#urlResourceInput').val().trim();
+	var url = httpString($('#urlResourceInput').val())[0];
+	var url = url.trim();
 
 	$('#parseStat').html('解析中..');
 	$('#parseStat').removeClass();
@@ -47,12 +58,33 @@ const storeUserResource = () => {
 	});
 };
 
+const saveResource = () => {
+	if (resourceInfo == null) {
+		alert('请先解析资源');
+		return;
+	}
+};
+
 domEventBind('click', '#parseResourceBtn', (e) => {
 	parseResource();
 });
 
 domEventBind('click', '#putResourceBtn', (e) => {
 	storeUserResource();
+});
+
+domEventBind('click', '#saveResourceBtn', (e) => {
+	saveResource();
+	var remoteResourceList = jsonInSession('remoteResourceList');
+	for (var i = 0; i < remoteResourceList.length; i++) {
+		if (remoteResourceList[i].resourceId == resourceInfo.resourceId) {
+			window.location.href = '/mobile/resourceUploadV2';
+			return;
+		}
+	}
+	remoteResourceList.push(resourceInfo);
+	jsonInSession('remoteResourceList', remoteResourceList);
+	window.location.href = '/mobile/resourceUploadV2';
 });
 
 

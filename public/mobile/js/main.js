@@ -669,6 +669,20 @@ const verifyLogin = () => {
 	});
 };
 
+const jsonInSession = (key, json) => {
+	if (!sessionStorage) {
+		alert('浏览器不支持 sessionStorage');
+		return;
+	}
+	if (!json) {
+		try {
+			return JSON.parse(sessionStorage[key]);
+		} catch (e) {
+			return null;
+		}
+	}
+	sessionStorage[key] = JSON.stringify(json);
+};
 
 var userInfoReady = new CustomEvent("userInfoReady", {});
 

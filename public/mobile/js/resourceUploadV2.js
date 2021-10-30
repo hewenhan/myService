@@ -310,9 +310,16 @@ requestApi('requestStsInfo', {}, (err, data) => {
 
 const loadFileFromRemote = (remoteResource) => {
 	loadFromUrl(remoteResource.resourceUrl, blob => {
+		var suffix = remoteResource.resourceUrl.replace(/.+\./, "").toLowerCase();
+		if (/audio/.test(remoteResource.mimetype)) {
+			suffix = 'mp3';
+		}
+		if (/video/.test(remoteResource.mimetype)) {
+			suffix = 'mp4';
+		}
 		var file = new File(
 			[blob],
-			remoteResource.name.trim() + '.' + remoteResource.resourceUrl.replace(/.+\./, "").toLowerCase(),
+			remoteResource.name.trim() + '.' + ,
 			{type: remoteResource.mimetype, lastModified: new Date()}
 		);
 		processInputUploadFile(file);

@@ -333,7 +333,7 @@ const loadFromUrl = (url, cb) => {
 	var xhttp = new XMLHttpRequest();
 	xhttp.responseType = 'blob';
 	xhttp.onreadystatechange = function() {
-		console.log($('.content').append('<br>' + this.readyState));
+		// console.log($('.content').append('<br>' + this.readyState));
 		if (this.readyState == 4 && this.status == 200) {
 			cb(xhttp.response);
 			return;

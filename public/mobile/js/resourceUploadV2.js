@@ -319,7 +319,7 @@ const loadFileFromRemote = (remoteResource) => {
 		}
 		var file = new File(
 			[blob],
-			remoteResource.name.trim() + '.' + ,
+			remoteResource.name.trim() + '.' + suffix,
 			{type: remoteResource.mimetype, lastModified: new Date()}
 		);
 		processInputUploadFile(file);

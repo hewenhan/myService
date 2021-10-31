@@ -59,13 +59,6 @@ var parseChangbaResource = (req, res) => {
 						req.allParams.result.name = desSplit[0];
 						req.allParams.result.artist = desSplit[1];
 					}
-					// if(tagname === "body"){
-					// 	req.allParams.result.resourceUrl = 'https://qiniuuwmp3.changba.com/' + attribs['data-workid'] + '.mp3';
-					// }
-
-					// if (tagname === 'script') {
-					// 	console.log(tagname);
-					// }
 				},
 				ontext: (text) => {
 					var pat = /commonObj\.url.*;/
@@ -105,10 +98,22 @@ var parseQuanMinKGeResource = (req, res) => {
 			'user-agent': 'Mozilla/5.0 (Linux; U; X11; en-US; Valve Steam Tenfoot/1533766730; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
 		}
 	};
-	reqHttp(options, (err, data) => {
+	reqHttp(options, (err, data, resHeaders, resCode) => {
 		if (err) {
 			console.log(options);
 			res.error('资源获取错误 ' + err);
+			return;
+		}
+
+		// console.log('//////////////////////////////////////////////');
+		// console.log(resCode);
+		// console.log(err);
+		// console.log(data);
+		// console.log(resHeaders);
+
+		if (resCode == 302) {
+			req.allParams.urlParse.href = resHeaders.location;
+			parseQuanMinKGeResource(req, res);
 			return;
 		}
 
@@ -151,8 +156,6 @@ var parseQuanMinKGeResource = (req, res) => {
 			}, {decodeEntities: true});
 			parser.write(data);
 			parser.end();
-			// var resourceUrlParse = urlParse.parse(req.allParams.result.resourceUrl);
-			// req.allParams.result.resourceUrl = `${resourceUrlParse.protocol}//${resourceUrlParse.host}${resourceUrlParse.pathname}`;
 
 			if (req.allParams.result.name && req.allParams.result.artist && req.allParams.result.resourceUrl) {
 				req.allParams.result.mimetype = 'audio/mp4';
@@ -185,10 +188,6 @@ var parseDouYinResource = (req, res) => {
 			return;
 		}
 		try {
-			// console.log(typeof(data));
-			// console.log('/////////////////////');
-			// console.log(data);
-			// console.log('/////////////////////');
 
 			if (typeof(data) == 'object') {
 				req.allParams.urlParse.href = data.href;

@@ -56,6 +56,44 @@ var convertFileSize = (fileObj) => {
 	return convertFileSize(fileObj);
 };
 
+
+var convertSize = (size, unit) => {
+	if (size < 100) {
+		size = Math.round(size * 100) / 100
+		return {size, unit};
+	}
+	if (!unit) {
+		unit = 'B';
+	}
+	size = size / 1024;
+	switch (unit) {
+		case 'B':
+		unit = 'KB';
+		break;
+
+		case 'KB':
+		unit = 'MB';
+		break;
+		
+		case 'MB':
+		unit = 'GB';
+		break;
+		
+		case 'GB':
+		unit = 'TB';
+		break;
+		
+		case 'TB':
+		unit = 'PB';
+		break;
+		
+		case 'PB':
+		unit = 'EB';
+		break;
+	}
+	return convertSize(size, unit);
+};
+
 const chunkSize = 4 * 1024 * 1024;
 var hashChunk = (chunk, hasher) => {
 	var fileReader = new FileReader();
@@ -309,7 +347,45 @@ requestApi('requestStsInfo', {}, (err, data) => {
 });
 
 const loadFileFromRemote = (remoteResource) => {
-	loadFromUrl(remoteResource.resourceUrl, blob => {
+	console.log(remoteResource);
+
+	$('#downloadFileListId').prepend(`
+		<div class="tableCell" id="downLoadFileInfo_${remoteResource.resourceId}">
+			<div class="tableLine">
+				<div class="tableTitle">资源名</div>
+				<div class="tableLineCell1">${remoteResource.name}</div>
+			</div>
+			<div class="tableLine">
+				<div class="tableTitle">资源类型</div>
+				<div class="tableLineCell1">${remoteResource.mimetype}</div>
+			</div>
+			<div class="tableLine uploadProcessDom">
+				<div class="tableTitle uploadStat">未下载</div>
+				<div class="tableLineCell1 uploadProgress">
+					<div class="progressBar"></div>
+					<div class="progressPresent">0/0 B<br>0.00%</div>
+				</div>
+			</div>
+		</div>
+	`);	
+
+	loadFromUrl(remoteResource.resourceUrl, (loaded, total) => {
+		var sizeInfo = convertSize(total);
+		var p = loaded / total;
+		var currentDownloadSize = (p * sizeInfo.size).toFixed(2);
+		var present = (p * 100).toFixed(2) * 1;
+		var opacity = (Math.round((0.5 + p / 2) * 100) / 100).toFixed(2);
+
+		$(`#downLoadFileInfo_${remoteResource.resourceId} .uploadProcessDom .uploadStat`).html('下载中');
+		$(`#downLoadFileInfo_${remoteResource.resourceId} .uploadProgress .progressPresent`).html(`${currentDownloadSize}/${sizeInfo.size}${sizeInfo.unit}<br>${present}%`);
+		$(`#downLoadFileInfo_${remoteResource.resourceId} .uploadProgress .progressBar`).css({ opacity: opacity, width: present + '%' });
+
+	} , (err, blob) => {
+		if (err) {
+			$(`#downLoadFileInfo_${remoteResource.resourceId} .uploadProcessDom .uploadStat`).html('下载失败');
+			$(`#downLoadFileInfo_${remoteResource.resourceId} .uploadProcessDom .uploadProgress`).html(`状态码: ${err}`);
+			return;
+		}
 		var suffix = remoteResource.resourceUrl.replace(/.+\./, "").toLowerCase();
 		if (/audio/.test(remoteResource.mimetype)) {
 			suffix = 'mp3';
@@ -322,6 +398,7 @@ const loadFileFromRemote = (remoteResource) => {
 			remoteResource.name.trim() + '.' + suffix,
 			{type: remoteResource.mimetype, lastModified: new Date()}
 		);
+		$(`#downLoadFileInfo_${remoteResource.resourceId}`).remove();
 		processInputUploadFile(file);
 	});
 };
@@ -337,27 +414,39 @@ const checkRemoteResource = () => {
 	for (var i = 0; i < remoteResourceList.length; i++) {
 		loadFileFromRemote(remoteResourceList[i]);
 	}
-	jsonInSession('remoteResourceList', []); 
+	jsonInSession('remoteResourceList', []);
 };
 
-const loadFromUrl = (url, cb) => {
+const loadFromUrl = (url, processCb, cb) => {
 	var xhttp = new XMLHttpRequest();
 	xhttp.responseType = 'blob';
-	xhttp.onreadystatechange = function() {
-		// console.log($('.content').append('<br>' + this.readyState));
-		if (this.readyState == 4 && this.status == 200) {
-			cb(xhttp.response);
+	xhttp.onerror = (e) => {
+		console.log(e);
+	};
+	xhttp.onprogress = (e) => {
+		processCb(e.loaded, e.total);
+	};
+	xhttp.onreadystatechange = (e) => {
+		// $('.content').append('<br>' + xhttp.readyState + ': ' + xhttp.status + ': ' + xhttp.statusText)
+		// console.log(e);
+		var err = null;
+		if (xhttp.readyState == 4 && (xhttp.status == 200 || xhttp.status == 304)) {
+			cb(err, xhttp.response);
 			return;
 		}
-		if (this.readyState == 4) {
-			alert('status: ' + this.status
-			+ '\nstatusText: '+ this.statusText
-			+ '\n跨域限制，禁止请求');
+		if (xhttp.readyState == 4) {
+			cb(xhttp.status);
+			return;
 		}
+		// if (xhttp.readyState == 4) {
+		// 	alert('status: ' + xhttp.status
+		// 	+ '\nstatusText: '+ xhttp.statusText
+		// 	+ '\n跨域限制，禁止请求');
+		// }
 	};
 
 	xhttp.open("GET", url, true);
-	xhttp.setRequestHeader('Referer', url)
+	// xhttp.setRequestHeader('Referer', url)
 	xhttp.send();
 	
 }

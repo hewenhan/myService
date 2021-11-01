@@ -243,11 +243,12 @@ var parseDouYinResource = (req, res) => {
 	});
 };
 
-var parseXimalayaResource = (req, res) => {
+var parseXimalayaResource = (req, res, cookie) => {
 	var options = {
 		url: req.allParams.urlParse.href,
 		headers: {
-			'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1'
+			'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
+			'Cookie': cookie
 		}
 	};
 	reqHttp(options, (err, data, resHeaders, resCode) => {
@@ -262,10 +263,19 @@ var parseXimalayaResource = (req, res) => {
 		console.log(err);
 		console.log(data);
 		console.log(resHeaders);
+		console.log(cookie);
 
-		if (resCode == 302) {
+		if (resHeaders['set-cookie']) {
+			cookie = '';
+			for (var i = 0; i < resHeaders['set-cookie'].length; i++) {
+				var cookieCell = resHeaders['set-cookie'][i];
+				cookie += cookieCell.split(';')[0] + ';';
+			}
+		}
+
+		if (resCode == 302 || resCode == 301) {
 			req.allParams.urlParse.href = resHeaders.location;
-			parseXimalayaResource(req, res);
+			parseXimalayaResource(req, res, cookie);
 			return;
 		}
 	});

@@ -244,13 +244,14 @@ var parseDouYinResource = (req, res) => {
 };
 
 var parseXimalayaResource = (req, res, cookie) => {
+	req.allParams.urlParse = urlParse.parse(req.allParams.url);
+
 	var options = {
 		url: req.allParams.urlParse.href,
 		headers: {
 			'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1'
 		}
 	};
-
 	if (cookie) {
 		options.headers.Cookie = cookie;
 	}
@@ -278,8 +279,13 @@ var parseXimalayaResource = (req, res, cookie) => {
 				}
 			}
 
-			if (resCode == 301 || resCode == 302 || resCode == 303 || resCode == 304) {
+			if (resCode == 301 || resCode == 302) {
 				req.allParams.urlParse.href = resHeaders.location;
+				parseXimalayaResource(req, res, cookie);
+				return;
+			}
+			if (resCode == 303 || resCode == 304) {
+				req.allParams.urlParse.href = `${req.allParams.urlParse.protocol}://${req.allParams.urlParse.host}${resHeaders.location}`
 				parseXimalayaResource(req, res, cookie);
 				return;
 			}

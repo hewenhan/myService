@@ -278,7 +278,7 @@ var parseXimalayaResource = (req, res, cookie) => {
 				}
 			}
 
-			if (resCode == 302 || resCode == 301) {
+			if (resCode == 301 || resCode == 302 || resCode == 303 || resCode == 304) {
 				req.allParams.urlParse.href = resHeaders.location;
 				parseXimalayaResource(req, res, cookie);
 				return;

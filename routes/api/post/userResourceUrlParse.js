@@ -279,12 +279,14 @@ var parseXimalayaResource = (req, res, cookie) => {
 			return;
 		}
 
-		try {
-			throw "Non Resource";
-		} catch (e) {
-			console.log(e);
-			res.error('资源解析错误，请检查链接有效性');
-		}
+		res.error('资源解析错误，请检查链接有效性');
+
+		// try {
+		// 	throw "Non Resource";
+		// } catch (e) {
+		// 	console.log(e);
+		// 	res.error('资源解析错误，请检查链接有效性');
+		// }
 	});
 };
 

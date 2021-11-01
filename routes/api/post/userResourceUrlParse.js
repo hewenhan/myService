@@ -258,35 +258,34 @@ var parseXimalayaResource = (req, res, cookie) => {
 			return;
 		}
 
-		console.log('//////////////////////////////////////////////');
-		console.log(resCode);
-		console.log(err);
-		console.log(data);
-		console.log(resHeaders);
-		console.log(cookie);
 
-		if (resHeaders['set-cookie']) {
-			cookie = '';
-			for (var i = 0; i < resHeaders['set-cookie'].length; i++) {
-				var cookieCell = resHeaders['set-cookie'][i];
-				cookie += cookieCell.split(';')[0] + ';';
+		try {
+			console.log('//////////////////////////////////////////////');
+			console.log(resCode);
+			console.log(err);
+			console.log(data);
+			console.log(resHeaders);
+			console.log(cookie);
+
+			if (resHeaders['set-cookie']) {
+				cookie = '';
+				for (var i = 0; i < resHeaders['set-cookie'].length; i++) {
+					var cookieCell = resHeaders['set-cookie'][i];
+					cookie += cookieCell.split(';')[0] + ';';
+				}
 			}
+
+			if (resCode == 302 || resCode == 301) {
+				req.allParams.urlParse.href = resHeaders.location;
+				parseXimalayaResource(req, res, cookie);
+				return;
+			}
+
+			throw "Non Resource";
+		} catch (e) {
+			console.log(e);
+			res.error('资源解析错误，请检查链接有效性');
 		}
-
-		if (resCode == 302 || resCode == 301) {
-			req.allParams.urlParse.href = resHeaders.location;
-			parseXimalayaResource(req, res, cookie);
-			return;
-		}
-
-		res.error('资源解析错误，请检查链接有效性');
-
-		// try {
-		// 	throw "Non Resource";
-		// } catch (e) {
-		// 	console.log(e);
-		// 	res.error('资源解析错误，请检查链接有效性');
-		// }
 	});
 };
 

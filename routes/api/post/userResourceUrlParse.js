@@ -247,12 +247,7 @@ var parseXimalayaResource = (req, res, cookie, retryCount) => {
 	req.allParams.urlParse = urlParse.parse(req.allParams.url);
 
 	var options = {
-		url: req.allParams.urlParse.href,
-		headers: {
-			'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
-			cookie: 'Hm_lvt_e2abff7f9ca8c2fa2da3ef27e36bbc27=1635744966; Hm_lpvt_e2abff7f9ca8c2fa2da3ef27e36bbc27=1635744966; x_xmly_cps_promote_info="v2_Ys7hs8UAMiwGSbr5imqbORB7gmsiLUX045fSCLgFQrfyPEAwydaXlXLbitpOdSDvcDE7eGezLBADpaYpofBWHJoPr6BfQTlJRmHVwPHCToHLnVsI06bouENMnNX/KcPq7yJ3GL2YouiIas42eTUUkIHymTA75G/ckN0Mj0rT9hI9wznDzZGBDQ=="; cps_promote_info="v2_Ys7hs8UAMiwGSbr5imqbORB7gmsiLUX045fSCLgFQrfyPEAwydaXlXLbitpOdSDvcDE7eGezLBADpaYpofBWHJoPr6BfQTlJRmHVwPHCToHLnVsI06bouENMnNX/KcPq7yJ3GL2YouiIas42eTUUkIHymTA75G/ckN0Mj0rT9hI9wznDzZGBDQ=="; x_xmly_isDistributor=false; isDistributor=false; x_xmly_row_key=79788898874969929_track_adf874ffee8d463bb9fcf569fc7e6dea; row_key=79788898874969929_track_adf874ffee8d463bb9fcf569fc7e6dea; h5_channel=ambassador_79788898874969929_track_adf874ffee8d463bb9fcf569fc7e6dea$share_76235755_TRACK_131080402$; x_xmly_order_context=%7B%22cps_promote_info%22%3A%22v2_Ys7hs8UAMiwGSbr5imqbORB7gmsiLUX045fSCLgFQrfyPEAwydaXlXLbitpOdSDvcDE7eGezLBADpaYpofBWHJoPr6BfQTlJRmHVwPHCToHLnVsI06bouENMnNX%2FKcPq7yJ3GL2YouiIas42eTUUkIHymTA75G%2FckN0Mj0rT9hI9wznDzZGBDQ%3D%3D%22%2C%22orderFrom%22%3A%226%22%2C%22rowKey%22%3A%2279788898874969929_track_adf874ffee8d463bb9fcf569fc7e6dea%22%7D; order_context=%7B%22cps_promote_info%22%3A%22v2_Ys7hs8UAMiwGSbr5imqbORB7gmsiLUX045fSCLgFQrfyPEAwydaXlXLbitpOdSDvcDE7eGezLBADpaYpofBWHJoPr6BfQTlJRmHVwPHCToHLnVsI06bouENMnNX%2FKcPq7yJ3GL2YouiIas42eTUUkIHymTA75G%2FckN0Mj0rT9hI9wznDzZGBDQ%3D%3D%22%2C%22orderFrom%22%3A%226%22%2C%22rowKey%22%3A%2279788898874969929_track_adf874ffee8d463bb9fcf569fc7e6dea%22%7D; default_order_source_type=20; default_order_source_value=%7B%22b%22%3A%2276235755%22%7D'
-		}
-	};
+		url: req.allParams.urlParse.href
 	if (cookie) {
 		options.headers.Cookie = cookie;
 	}

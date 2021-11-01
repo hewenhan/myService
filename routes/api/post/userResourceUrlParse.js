@@ -244,26 +244,79 @@ var parseDouYinResource = (req, res) => {
 };
 
 var parseXimalayaResource = (req, res, cookie, retryCount) => {
-	var audioId = req.allParams.urlParse.href.split('/');
-	audioId = audioId[audioId.length - 1]
+	req.allParams.urlParse = urlParse.parse(req.allParams.url);
+
 	var options = {
-		url: `https://www.ximalaya.com/revision/play/v1/audio?id=${audioId}&ptype=1`,
-		headers: {
-			Cookie: '_xmLog=h5&d3f59f81-a75e-4171-ab85-29e62d45294c&2.4.9; trackType=web; xm-page-viewid=ximalaya-web; Hm_lvt_4a7d8ec50cfd6af753c4f8aee3425070=1635742099; 1&remember_me=y; 1&_token=76235755&8DBDB0C0240NF06321496E41A3847AFBDCE6D63475BC8C84DFA6A1FF0D92FD8748C2A3851627111MCF2C5B6B46D7E0A_; 1_l_flag=76235755&8DBDB0C0240NF06321496E41A3847AFBDCE6D63475BC8C84DFA6A1FF0D92FD8748C2A3851627111MCF2C5B6B46D7E0A__2021-11-0115:16:05; x_xmly_traffic=utm_source%253A%2526utm_medium%253A%2526utm_campaign%253A%2526utm_content%253A%2526utm_term%253A%2526utm_from%253A; Hm_lpvt_4a7d8ec50cfd6af753c4f8aee3425070=1635751007'
-		}
+		url: req.allParams.urlParse.href
 	};
 	if (cookie) {
 		options.headers.Cookie = cookie;
 	}
 	reqHttp(options, (err, data, resHeaders, resCode) => {
+		if (req.allParams.retryCount == null) {
+			req.allParams.retryCount = 0;
+		}
+		req.allParams.retryCount++;
+		if (req.allParams.retryCount > 7) {
+			res.error('资源解析尝试7次错误，请检查链接有效性');
+			return;
+		}
 		if (err) {
 			console.log(options);
 			res.error('资源获取错误 ' + err);
 			return;
 		}
-		console.log(data);
-		console.log(typeof(data));
-		res.error('资源解析错误，请检查链接有效性');
+		try {
+			console.log('//////////////////////////////////////////////');
+			console.log(resCode);
+			console.log(err);
+			console.log(resHeaders);
+			console.log(cookie);
+
+			if (resHeaders['set-cookie']) {
+				cookie = '';
+				for (var i = 0; i < resHeaders['set-cookie'].length; i++) {
+					var cookieCell = resHeaders['set-cookie'][i];
+					cookie += cookieCell.split(';')[0] + ';';
+				}
+			}
+
+			if (resCode == 301 || resCode == 302) {
+				req.allParams.urlParse.href = resHeaders.location;
+				parseXimalayaResource(req, res, cookie, retryCount);
+				return;
+			}
+			if (resCode == 303 || resCode == 304) {
+				req.allParams.urlParse.href = `${req.allParams.urlParse.protocol}://${req.allParams.urlParse.host}${resHeaders.location}`
+				parseXimalayaResource(req, res, cookie, retryCount);
+				return;
+			}
+
+			var parser = new htmlparser.Parser({
+				onopentag: (tagname, attribs) => {
+					console.log(tagname + '-------->');
+				},
+				ontext: (text) => {
+					console.log(text);
+				},
+				onclosetag: (tagname) => {
+					console.log(tagname + '<--------');
+				}
+			}, {decodeEntities: true});
+			parser.write(data);
+			parser.end();
+
+			if (req.allParams.result.name && req.allParams.result.artist && req.allParams.result.resourceUrl) {
+				req.allParams.result.mimetype = 'video/mp4';
+				insertOrUpdateUserResource(req, res);
+				return;
+			}
+
+			throw "Non Resource";
+		} catch (e) {
+			console.log(e);
+			res.error('资源解析错误，请检查链接有效性');
+		}
 	});
 };
 
@@ -298,6 +351,8 @@ var switchResource = (req, res) => {
 		parseDouYinResource(req, res);
 		break;
 
+		case 'm.ximalaya.com':
+		case 'xima.tv':
 		case 'www.ximalaya.com':
 		case 'ximalaya.com':
 

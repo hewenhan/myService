@@ -1,9 +1,10 @@
 var resourceInfo;
-if (sessionStorage) {
-	if (!jsonInSession('remoteResourceList')) {
-		jsonInSession('remoteResourceList', []);
-	}
-}
+jsonInSession('remoteResourceList', []);
+// if (sessionStorage) {
+// 	if (!jsonInSession('remoteResourceList')) {
+// 		jsonInSession('remoteResourceList', []);
+// 	}
+// }
 
 const showParseDone = () => {
 	var html = `艺术家: ${resourceInfo.artist}

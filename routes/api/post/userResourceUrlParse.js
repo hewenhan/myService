@@ -243,6 +243,34 @@ var parseDouYinResource = (req, res) => {
 	});
 };
 
+var parseXimalayaResource = (req, res) => {
+	var options = {
+		url: req.allParams.urlParse.href,
+		headers: {
+			'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1'
+		}
+	};
+	reqHttp(options, (err, data, resHeaders, resCode) => {
+		if (err) {
+			console.log(options);
+			res.error('资源获取错误 ' + err);
+			return;
+		}
+
+		console.log('//////////////////////////////////////////////');
+		console.log(resCode);
+		console.log(err);
+		console.log(data);
+		console.log(resHeaders);
+
+		if (resCode == 302) {
+			req.allParams.urlParse.href = resHeaders.location;
+			parseXimalayaResource(req, res);
+			return;
+		}
+	};
+};
+
 var switchResource = (req, res) => {
 	console.log(req.allParams);
 	req.allParams.result.description = req.allParams.urlParse.href;
@@ -272,6 +300,14 @@ var switchResource = (req, res) => {
 		case 'douyin.com':
 
 		parseDouYinResource(req, res);
+		break;
+
+		case 'm.ximalaya.com':
+		case 'xima.tv':
+		case 'www.ximalaya.com':
+		case 'ximalaya.com':
+
+		parseXimalayaResource(req, res);
 		break;
 
 		default:

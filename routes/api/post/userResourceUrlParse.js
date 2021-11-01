@@ -248,6 +248,7 @@ var parseXimalayaResource = (req, res, cookie, retryCount) => {
 
 	var options = {
 		url: req.allParams.urlParse.href
+	};
 	if (cookie) {
 		options.headers.Cookie = cookie;
 	}

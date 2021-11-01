@@ -262,6 +262,8 @@ var parseXimalayaResource = (req, res, cookie, retryCount) => {
 			return;
 		}
 		console.log(data);
+		console.log(typeof(data));
+		res.error('资源解析错误，请检查链接有效性');
 	});
 };
 

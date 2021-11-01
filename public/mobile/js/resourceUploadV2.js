@@ -414,7 +414,7 @@ const checkRemoteResource = () => {
 	for (var i = 0; i < remoteResourceList.length; i++) {
 		loadFileFromRemote(remoteResourceList[i]);
 	}
-	jsonInSession('remoteResourceList', []);
+	// jsonInSession('remoteResourceList', []);
 };
 
 const loadFromUrl = (url, processCb, cb) => {

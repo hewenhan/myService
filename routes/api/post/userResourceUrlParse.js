@@ -243,7 +243,7 @@ var parseDouYinResource = (req, res) => {
 	});
 };
 
-var parseXimalayaResource = (req, res, cookie) => {
+var parseXimalayaResource = (req, res, cookie, retryCount) => {
 	req.allParams.urlParse = urlParse.parse(req.allParams.url);
 
 	var options = {
@@ -256,6 +256,13 @@ var parseXimalayaResource = (req, res, cookie) => {
 		options.headers.Cookie = cookie;
 	}
 	reqHttp(options, (err, data, resHeaders, resCode) => {
+		if (req.allParams.retryCount == null) {
+			req.allParams.retryCount = 0;
+		}
+		if (req.allParams.retryCount > 7) {
+			res.error('资源解析尝试5次错误，请检查链接有效性');
+			return;
+		}
 		if (err) {
 			console.log(options);
 			res.error('资源获取错误 ' + err);
@@ -281,12 +288,12 @@ var parseXimalayaResource = (req, res, cookie) => {
 
 			if (resCode == 301 || resCode == 302) {
 				req.allParams.urlParse.href = resHeaders.location;
-				parseXimalayaResource(req, res, cookie);
+				parseXimalayaResource(req, res, cookie, retryCount);
 				return;
 			}
 			if (resCode == 303 || resCode == 304) {
 				req.allParams.urlParse.href = `${req.allParams.urlParse.protocol}://${req.allParams.urlParse.host}${resHeaders.location}`
-				parseXimalayaResource(req, res, cookie);
+				parseXimalayaResource(req, res, cookie, retryCount);
 				return;
 			}
 

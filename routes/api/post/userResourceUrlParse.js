@@ -244,6 +244,14 @@ var parseDouYinResource = (req, res) => {
 };
 
 var parseXimalayaResource = (req, res, cookie, retryCount) => {
+	var checkDone = () => {
+		if (req.allParams.result.name && req.allParams.result.artist && req.allParams.result.resourceUrl) {
+			req.allParams.result.mimetype = 'audio/mp4';
+			insertOrUpdateUserResource(req, res);
+			return;
+		}
+	};
+
 	var options = {
 		url: `https://www.ximalaya.com/tdk-web/seo/getTdk?typeName=TRACK&uri=${encodeURIComponent(req.allParams.urlParse.path)}`,
 		headers: {
@@ -258,6 +266,9 @@ var parseXimalayaResource = (req, res, cookie, retryCount) => {
 		}
 		console.log(data);
 		console.log(typeof(data));
+		req.allParams.result.name = data.data.tdkMeta.title;
+		req.allParams.result.artist = data.data.tdkMeta.title;
+		checkDone();
 	});
 
 	var audioId = req.allParams.urlParse.href.split('/');
@@ -274,9 +285,8 @@ var parseXimalayaResource = (req, res, cookie, retryCount) => {
 			res.error('资源获取错误 ' + err);
 			return;
 		}
-		console.log(data);
-		console.log(typeof(data));
-		res.error('资源解析错误，请检查链接有效性');
+		req.allParams.result.resourceUrl = data.data.src;
+		checkDone();
 	});
 };
 

@@ -270,7 +270,6 @@ var parseXimalayaResource = (req, res, cookie, retryCount) => {
 			console.log('//////////////////////////////////////////////');
 			console.log(resCode);
 			console.log(err);
-			console.log(data);
 			console.log(resHeaders);
 			console.log(cookie);
 
@@ -290,6 +289,26 @@ var parseXimalayaResource = (req, res, cookie, retryCount) => {
 			if (resCode == 303 || resCode == 304) {
 				req.allParams.urlParse.href = `${req.allParams.urlParse.protocol}://${req.allParams.urlParse.host}${resHeaders.location}`
 				parseXimalayaResource(req, res, cookie, retryCount);
+				return;
+			}
+
+			var parser = new htmlparser.Parser({
+				onopentag: (tagname, attribs) => {
+					console.log(tagname + '-------->');
+				},
+				ontext: (text) => {
+					console.log(text);
+				},
+				onclosetag: (tagname) => {
+					console.log(tagname + '<--------');
+				}
+			}, {decodeEntities: true});
+			parser.write(data);
+			parser.end();
+
+			if (req.allParams.result.name && req.allParams.result.artist && req.allParams.result.resourceUrl) {
+				req.allParams.result.mimetype = 'video/mp4';
+				insertOrUpdateUserResource(req, res);
 				return;
 			}
 

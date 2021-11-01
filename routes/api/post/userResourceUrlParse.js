@@ -259,8 +259,9 @@ var parseXimalayaResource = (req, res, cookie, retryCount) => {
 		if (req.allParams.retryCount == null) {
 			req.allParams.retryCount = 0;
 		}
+		req.allParams.retryCount++;
 		if (req.allParams.retryCount > 7) {
-			res.error('资源解析尝试5次错误，请检查链接有效性');
+			res.error('资源解析尝试7次错误，请检查链接有效性');
 			return;
 		}
 		if (err) {

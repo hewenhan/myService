@@ -268,7 +268,7 @@ var parseXimalayaResource = (req, res) => {
 			parseXimalayaResource(req, res);
 			return;
 		}
-	};
+	});
 };
 
 var switchResource = (req, res) => {

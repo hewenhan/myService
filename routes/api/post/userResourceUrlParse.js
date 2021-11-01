@@ -286,6 +286,7 @@ var parseXimalayaResource = (req, res, cookie, retryCount) => {
 			res.error('资源获取错误 ' + err);
 			return;
 		}
+		req.allParams.result.resourceUrl = data.data.src;
 		checkDone();
 	});
 };

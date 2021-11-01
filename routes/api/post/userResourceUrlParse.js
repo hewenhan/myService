@@ -251,7 +251,6 @@ var parseXimalayaResource = (req, res, cookie, retryCount) => {
 			return;
 		}
 	};
-
 	var options = {
 		url: `https://www.ximalaya.com/tdk-web/seo/getTdk?typeName=TRACK&uri=${encodeURIComponent(req.allParams.urlParse.path)}`,
 		headers: {
@@ -323,6 +322,7 @@ var switchResource = (req, res) => {
 
 		case 'www.ximalaya.com':
 		case 'ximalaya.com':
+		case 'm.ximalaya.com':
 
 		parseXimalayaResource(req, res);
 		break;

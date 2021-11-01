@@ -247,10 +247,13 @@ var parseXimalayaResource = (req, res, cookie) => {
 	var options = {
 		url: req.allParams.urlParse.href,
 		headers: {
-			'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
-			'Cookie': cookie
+			'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1'
 		}
 	};
+
+	if (cookie) {
+		options.headers.Cookie = cookie;
+	}
 	reqHttp(options, (err, data, resHeaders, resCode) => {
 		if (err) {
 			console.log(options);

@@ -251,20 +251,16 @@ var parseXimalayaResource = (req, res, cookie, retryCount) => {
 			return;
 		}
 	};
-	var options = {
+	reqHttp({
 		url: `https://www.ximalaya.com/tdk-web/seo/getTdk?typeName=TRACK&uri=${encodeURIComponent(req.allParams.urlParse.path)}`,
 		headers: {
 			Cookie: '_xmLog=h5&d3f59f81-a75e-4171-ab85-29e62d45294c&2.4.9; trackType=web; xm-page-viewid=ximalaya-web; Hm_lvt_4a7d8ec50cfd6af753c4f8aee3425070=1635742099; 1&remember_me=y; 1&_token=76235755&8DBDB0C0240NF06321496E41A3847AFBDCE6D63475BC8C84DFA6A1FF0D92FD8748C2A3851627111MCF2C5B6B46D7E0A_; 1_l_flag=76235755&8DBDB0C0240NF06321496E41A3847AFBDCE6D63475BC8C84DFA6A1FF0D92FD8748C2A3851627111MCF2C5B6B46D7E0A__2021-11-0115:16:05; x_xmly_traffic=utm_source%253A%2526utm_medium%253A%2526utm_campaign%253A%2526utm_content%253A%2526utm_term%253A%2526utm_from%253A; Hm_lpvt_4a7d8ec50cfd6af753c4f8aee3425070=1635751007'
 		}
-	};
-	reqHttp(options, (err, data, resHeaders, resCode) => {
+	}, (err, data, resHeaders, resCode) => {
 		if (err) {
-			console.log(options);
 			res.error('资源获取错误 ' + err);
 			return;
 		}
-		console.log(data);
-		console.log(typeof(data));
 		req.allParams.result.name = data.data.tdkMeta.title;
 		req.allParams.result.artist = data.data.tdkMeta.title;
 		checkDone();
@@ -272,15 +268,13 @@ var parseXimalayaResource = (req, res, cookie, retryCount) => {
 
 	var audioId = req.allParams.urlParse.href.split('/');
 	audioId = audioId[audioId.length - 1];
-	var options = {
+	reqHttp({
 		url: `https://www.ximalaya.com/revision/play/v1/audio?id=${audioId}&ptype=1`,
 		headers: {
 			Cookie: '_xmLog=h5&d3f59f81-a75e-4171-ab85-29e62d45294c&2.4.9; trackType=web; xm-page-viewid=ximalaya-web; Hm_lvt_4a7d8ec50cfd6af753c4f8aee3425070=1635742099; 1&remember_me=y; 1&_token=76235755&8DBDB0C0240NF06321496E41A3847AFBDCE6D63475BC8C84DFA6A1FF0D92FD8748C2A3851627111MCF2C5B6B46D7E0A_; 1_l_flag=76235755&8DBDB0C0240NF06321496E41A3847AFBDCE6D63475BC8C84DFA6A1FF0D92FD8748C2A3851627111MCF2C5B6B46D7E0A__2021-11-0115:16:05; x_xmly_traffic=utm_source%253A%2526utm_medium%253A%2526utm_campaign%253A%2526utm_content%253A%2526utm_term%253A%2526utm_from%253A; Hm_lpvt_4a7d8ec50cfd6af753c4f8aee3425070=1635751007'
 		}
-	};
-	reqHttp(options, (err, data, resHeaders, resCode) => {
+	}, (err, data, resHeaders, resCode) => {
 		if (err) {
-			console.log(options);
 			res.error('资源获取错误 ' + err);
 			return;
 		}

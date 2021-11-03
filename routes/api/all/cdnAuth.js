@@ -11,6 +11,7 @@ const rejectBadRequest = (req, res) => {
 module.exports = (req, res, next) => {
 
 	var ua = req.headers['user-agent'].trim().toLowerCase();
+	console.log(ua);
 
 	if (ua == "") {
 		rejectBadRequest(req, res);
@@ -40,6 +41,18 @@ module.exports = (req, res, next) => {
 		res.success();
 		return;
 	}
+        if (/curl/g.test(ua)) {
+                res.success();
+                return;
+        }
+        if (/vlc/g.test(ua)) {
+                res.success();
+                return;
+        }
+        if (/twitterbot/g.test(ua)) {
+                res.success();
+                return;
+        }
 	
 
 	rejectBadRequest(req, res);

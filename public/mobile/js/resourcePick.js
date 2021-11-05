@@ -49,6 +49,10 @@ const storeUserResource = () => {
 		alert('请先解析资源');
 		return;
 	}
+	if (/(service\.local|service.hewenhan.me)/.test(resourceInfo.resourceUrl)) {
+		saveResource();
+		return;
+	}
 	userResourceRegister(resourceInfo.resourceId, (err, data) => {
 		if (err) {
 			alert(err);
@@ -64,6 +68,16 @@ const saveResource = () => {
 		alert('请先解析资源');
 		return;
 	}
+	var remoteResourceList = jsonInSession('remoteResourceList');
+	for (var i = 0; i < remoteResourceList.length; i++) {
+		if (remoteResourceList[i].resourceId == resourceInfo.resourceId) {
+			window.location.href = '/mobile/resourceUploadV2';
+			return;
+		}
+	}
+	remoteResourceList.push(resourceInfo);
+	jsonInSession('remoteResourceList', remoteResourceList);
+	window.location.href = '/mobile/resourceUploadV2';
 };
 
 domEventBind('click', '#parseResourceBtn', (e) => {
@@ -76,16 +90,6 @@ domEventBind('click', '#putResourceBtn', (e) => {
 
 domEventBind('click', '#saveResourceBtn', (e) => {
 	saveResource();
-	var remoteResourceList = jsonInSession('remoteResourceList');
-	for (var i = 0; i < remoteResourceList.length; i++) {
-		if (remoteResourceList[i].resourceId == resourceInfo.resourceId) {
-			window.location.href = '/mobile/resourceUploadV2';
-			return;
-		}
-	}
-	remoteResourceList.push(resourceInfo);
-	jsonInSession('remoteResourceList', remoteResourceList);
-	window.location.href = '/mobile/resourceUploadV2';
 });
 
 

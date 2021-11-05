@@ -235,6 +235,7 @@ var parseDouYinResource = (req, res) => {
 						req.allParams.result.name        = mediaInfo.desc;
 						req.allParams.result.artist      = mediaInfo.authorInfo.nickname;
 						req.allParams.result.resourceUrl = 'https:' + mediaInfo.video.playAddr[0].src;
+						req.allParams.result.resourceUrl = `${req.protocol}://${req.host}/api/userPassProxy?url=${encodeURIComponent(req.allParams.result.resourceUrl)}`;
 					}
 				},
 				onclosetag: (tagname) => {

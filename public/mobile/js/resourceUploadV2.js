@@ -420,7 +420,9 @@ const checkRemoteResource = () => {
 const loadFromUrl = (url, processCb, cb) => {
 	var xhttp = new XMLHttpRequest();
 	xhttp.responseType = 'blob';
-	url = url.replace(/^http:/, 'https:');
+	if (window.location.protocol == 'https:') {
+		url = url.replace(/^http:/, 'https:');
+	}
 	xhttp.onerror = (e) => {
 		cb(e.type);
 	};

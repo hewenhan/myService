@@ -3,6 +3,10 @@ var htmlparser  = require('htmlparser2');
 var util        = require('util');
 const CryptoJS  = require('crypto-js');
 var querystring = require('qs');
+var tough       = require('tough-cookie');
+
+var Cookie    = tough.Cookie;
+var cookiejar = new tough.CookieJar();
 
 var insertOrUpdateUserResource = (req, res) => {
 	var insertOrUpdateUserResourceJson = {
@@ -261,7 +265,7 @@ var parseDouYinResource = (req, res) => {
 	});
 };
 
-var parseXimalayaResource = (req, res, cookie, retryCount) => {
+var parseXimalayaResourceBak = (req, res, cookie, retryCount) => {
 	var checkDone = () => {
 		if (req.allParams.result.name && req.allParams.result.artist && req.allParams.result.resourceUrl) {
 			req.allParams.result.mimetype = 'audio/mp4';
@@ -308,6 +312,127 @@ var parseXimalayaResource = (req, res, cookie, retryCount) => {
 	});
 };
 
+var parseXimalayaResource = (req, res, retryCount) => {
+	var retryCount = retryCount || 0;
+	if (retryCount > 10) {
+		res.error('重试次数过多');
+		return;
+	}
+
+	var checkDone = () => {
+		if (req.allParams.result.name && req.allParams.result.artist && req.allParams.result.resourceUrl) {
+			req.allParams.result.mimetype = 'audio/mp4';
+			insertOrUpdateUserResource(req, res);
+			return;
+		}
+	};
+
+	var options = {
+		url: req.allParams.urlParse.href,
+		headers: {
+			'user-agent': 'Mozilla/5.0 (Linux; U; X11; en-US; Valve Steam Tenfoot/1533766730; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
+		}
+	};
+
+	var currentCookie = cookiejar.getCookiesSync(`http://${req.allParams.urlParse.host}`);
+	if (currentCookie.length != 0) {
+		options.headers.Cookie = '';
+		currentCookie.forEach(cookie => {
+			var cookieJson = cookie.toJSON();
+			options.headers.Cookie += `${cookieJson.key}=${cookieJson.value}; `
+		});
+	}
+
+	reqHttp(options, (err, data, resHeaders, resCode) => {
+		// console.log(`//////// REQUEST RECIVE /////////////////////////////////////`);
+		// console.log(`err       : ${err}`);
+		// console.log(`data      : ${data}`);
+		// console.log(`resHeaders: ${util.inspect(resHeaders)}`);
+		// console.log(`resCode   : ${resCode}`);
+
+		if (err) {
+			res.error('资源获取错误 ' + err);
+			return;
+		}
+
+		if (resHeaders['set-cookie']) {
+			if (resHeaders['set-cookie'] instanceof Array)
+				cookies = resHeaders['set-cookie'].map(Cookie.parse);
+			else
+				cookies = [Cookie.parse(resHeaders['set-cookie'])];
+			cookies.forEach(cookie => {
+				var cookieJson = cookie.toJSON();
+				cookiejar.setCookieSync(cookie, `http://${cookieJson.domain}`);
+			});
+		}
+
+		if (resCode == 302 || resCode == 301 || resCode == 303) {
+			if (resHeaders.location[0] == '/') {
+				resHeaders.location = `${req.allParams.urlParse.protocol}//${req.allParams.urlParse.host}${resHeaders.location}`
+			}
+
+			req.allParams.url      = resHeaders.location;
+			req.allParams.urlParse = urlParse.parse(resHeaders.location);
+
+			retryCount++;
+			parseXimalayaResource(req, res, retryCount);
+			return;
+		}
+
+		try {
+
+			var start   = false;
+			var success = false;
+			var parser  = new htmlparser.Parser({
+				onopentag: (tagname, attribs) => {
+					if (tagname == 'script' && !success) {
+						start = true;
+					}
+				},
+				ontext: (text) => {
+					if (!start || success) {
+						return;
+					}
+
+					var compare = /^window.__INITIAL_STATE__/.test(text);
+
+					if (!compare) {
+						return;
+					}
+					text = text.replace("window.__INITIAL_STATE__ = ", "");
+					text = text.replace("};", "}");
+					var analyseObj = JSON.parse(text);
+					var albumInfo = analyseObj[req.allParams.urlParse.path].albumInfo;
+					var trackInfo = analyseObj[req.allParams.urlParse.path].trackInfo;
+					req.allParams.result.name = `${albumInfo.title}-${trackInfo.title}`;
+					req.allParams.result.artist = '喜马拉雅';
+					req.allParams.result.resourceUrl = trackInfo.src;
+
+					console.log(util.inspect(analyseObj, {depth: 6}));
+
+					success = true;
+				},
+				onclosetag: (tagname) => {
+
+				}
+			}, {decodeEntities: true});
+			parser.write(data);
+			parser.end();
+
+			if (req.allParams.result.name && req.allParams.result.artist && req.allParams.result.resourceUrl) {
+				req.allParams.result.mimetype = 'audio/mp4';
+				insertOrUpdateUserResource(req, res);
+				return;
+			}
+
+			throw "Non Resource"
+		} catch (e) {
+
+		}
+	});
+
+};
+
 var switchResource = (req, res) => {
 	console.log(req.allParams);
 	req.allParams.result.description = req.allParams.urlParse.href;
@@ -342,6 +467,7 @@ var switchResource = (req, res) => {
 		case 'www.ximalaya.com':
 		case 'ximalaya.com':
 		case 'm.ximalaya.com':
+		case 'xima.tv':
 
 		parseXimalayaResource(req, res);
 		break;

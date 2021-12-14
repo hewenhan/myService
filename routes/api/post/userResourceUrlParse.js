@@ -8,13 +8,15 @@ var tough       = require('tough-cookie');
 var Cookie    = tough.Cookie;
 var cookiejar = new tough.CookieJar();
 
+var chrome = require('nodejs-chrome');
+
 var insertOrUpdateUserResource = (req, res) => {
 	var insertOrUpdateUserResourceJson = {
 		tableName: 'service.user_resource',
 		data: {
 			uid: req.allParams.userInfo.id,
-			filename: req.allParams.result.name,
-			artist: req.allParams.result.artist,
+			filename: req.allParams.result.name.replace(/[\u0800-\uFFFF]/g, ''),
+			artist: req.allParams.result.artist.replace(/[\u0800-\uFFFF]/g, ''),
 			mimetype: req.allParams.result.mimetype,
 			url: req.allParams.result.resourceUrl,
 			md5: 'OTHER STORAGE',
@@ -25,6 +27,7 @@ var insertOrUpdateUserResource = (req, res) => {
 
 	insertOrUpdate(insertOrUpdateUserResourceJson, (err, result) => {
 		if (err) {
+			res.error('资源登记错误');
 			return;
 		}
 		req.allParams.result.resourceId = result.insertId;
@@ -176,51 +179,131 @@ var parseQuanMinKGeResource = (req, res) => {
 	});
 };
 
-var douYinCookies = [];
-var parseDouYinResource = (req, res) => {
+var parseDouYinResource = async (req, res, retryCount) => {
+
+	var browser = await chrome({
+		device: {
+			userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36'
+		}
+	});
+	try {
+		var page = await browser.tabnew();
+		await page.setUrl(req.allParams.urlParse.href);
+		var data = await page.text();
+		console.log(data);
+		browser.exit();
+	} catch (e) {
+		console.log(e);
+		browser.exit();
+	}
+
+	try {
+
+		var start = false;
+		var success = false;
+
+		var parser = new htmlparser.Parser({
+			onopentag: (tagname, attribs) => {
+				if(tagname === "script" && attribs.id === 'RENDER_DATA' && !success){
+					start = true;
+				}
+			},
+			ontext: (text) => {
+				if (start && !success) {
+					success                          = true;
+					var mediaInfo                    = JSON.parse(decodeURIComponent(text));
+					console.log(util.inspect(mediaInfo));
+					mediaInfo                        = mediaInfo['21'].aweme.detail;
+					req.allParams.result.name        = mediaInfo.desc;
+					req.allParams.result.artist      = mediaInfo.authorInfo.nickname;
+					req.allParams.result.resourceUrl = 'https:' + mediaInfo.video.playAddr[0].src;
+					req.allParams.result.resourceUrl = `${req.protocol}://${req.host}/api/userPassProxy?url=${encodeURIComponent(req.allParams.result.resourceUrl)}`;
+				}
+			},
+			onclosetag: (tagname) => {
+					// console.log(catchHtml);
+				}
+			}, {decodeEntities: true});
+		parser.write(data);
+		parser.end();
+
+		if (req.allParams.result.name && req.allParams.result.artist && req.allParams.result.resourceUrl) {
+			req.allParams.result.mimetype = 'video/mp4';
+			insertOrUpdateUserResource(req, res);
+			return;
+		}
+
+		console.log(req.allParams.result);
+
+		throw "Non Resource"
+	} catch (e) {
+		console.log(e);
+		res.error('资源解析错误，请检查链接有效性');
+	}
+};
+
+var parseDouYinResourceBak = (req, res, retryCount) => {
+	var retryCount = retryCount || 0;
+	if (retryCount > 10) {
+		res.error('重试次数过多');
+		return;
+	}
 	var options = {
 		url: req.allParams.urlParse.href,
 		headers: {
-			'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36',
-			Cookie: 'passport_csrf_token_default=091caafd9647107a189f1b5313666bc5; passport_csrf_token=091caafd9647107a189f1b5313666bc5; __ac_nonce=061850716003ce28052cf; __ac_signature=_02B4Z6wo00f01U-IM3AAAIDAJsbUAO46JA1PqDfAADJq36; __ac_referer=__ac_blank'
+			'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36'
 		}
 	};
 
-	// if (douYinCookies.length != 0) {
-	// 	options.headers.Cookie = ""
-	// }
-	// for (var i = 0; i < douYinCookies.length; i++) {
-	// 	douYinCookies[i].split(';').forEach(cell => {
-	// 		options.headers.Cookie += cell.trim() + '; '
-	// 	});
-	// }
+	var currentCookie = cookiejar.getCookiesSync(`http://${req.allParams.urlParse.host}`);
+	if (currentCookie.length != 0) {
+		options.headers.Cookie = '';
+		currentCookie.forEach(cookie => {
+			var cookieJson = cookie.toJSON();
+			options.headers.Cookie += `${cookieJson.key}=${cookieJson.value}; `
+		});
+	}
 
 	reqHttp(options, (err, data, resHeaders, resCode) => {
-		if (req.allParams.retryCount == null) {
-			req.allParams.retryCount = 0;
+		console.log(`//////// REQUEST RECIVE /////////////////////////////////////`);
+		// console.log(`err       : ${err}`);
+		// console.log(`data      : ${data}`);
+		console.log(`resHeaders: ${util.inspect(resHeaders)}`);
+		console.log(`urlParse  : ${util.inspect(req.allParams.urlParse)}`);
+		console.log(`resCode   : ${resCode}`);
+
+		if (resHeaders['set-cookie']) {
+			if (resHeaders['set-cookie'] instanceof Array)
+				cookies = resHeaders['set-cookie'].map(Cookie.parse);
+			else
+				cookies = [Cookie.parse(resHeaders['set-cookie'])];
+			cookies.forEach(cookie => {
+				var cookieJson = cookie.toJSON();
+				cookiejar.setCookieSync(cookie, `http://${cookieJson.domain}`);
+			});
 		}
-		if (req.allParams.retryCount > 5) {
-			res.error('资源解析尝试5次错误，请检查链接有效性');
+
+		if (resCode == 301 || resCode == 302 || resCode == 303) {
+			if (resHeaders.location[0] == '/') {
+				resHeaders.location = `${req.allParams.urlParse.protocol}//${req.allParams.urlParse.host}${resHeaders.location}`
+			}
+
+			req.allParams.url      = resHeaders.location;
+			req.allParams.urlParse = urlParse.parse(resHeaders.location);
+
+			retryCount++;
+			parseDouYinResource(req, res, retryCount);
 			return;
 		}
+		
+		if (resHeaders['content-length'] < 2000) {
+			console.log(`data      : ${data}`);
+			console.log(`Need Parse`);
+			res.error(`Need Parse`);
+			return;
+		}
+		
 		try {
-
-			if (resCode == 302) {
-				req.allParams.urlParse.href = resHeaders.location;
-				// if (resHeaders["set-cookie"]) {
-				// 	douYinCookies = resHeaders["set-cookie"]
-				// }
-				req.allParams.retryCount++;
-				parseDouYinResource(req, res);
-				return;
-			}
-			// if (data.length <= 1024) {
-			// 	var reg = />.*</;
-			// 	req.allParams.urlParse.href = reg.exec(data)[0].replace('>', '').replace('<', '')
-			// 	req.allParams.retryCount++;
-			// 	parseDouYinResource(req, res);
-			// 	return;
-			// }
 
 			var start = false;
 			var success = false;
@@ -344,10 +427,11 @@ var parseXimalayaResource = (req, res, retryCount) => {
 	}
 
 	reqHttp(options, (err, data, resHeaders, resCode) => {
-		// console.log(`//////// REQUEST RECIVE /////////////////////////////////////`);
+		console.log(`//////// REQUEST RECIVE /////////////////////////////////////`);
 		// console.log(`err       : ${err}`);
 		// console.log(`data      : ${data}`);
-		// console.log(`resHeaders: ${util.inspect(resHeaders)}`);
+		console.log(`resHeaders: ${util.inspect(resHeaders)}`);
+		console.log(`urlParse  : ${util.inspect(req.allParams.urlParse)}`);
 		// console.log(`resCode   : ${resCode}`);
 
 		if (err) {
@@ -427,7 +511,8 @@ var parseXimalayaResource = (req, res, retryCount) => {
 
 			throw "Non Resource"
 		} catch (e) {
-
+			console.log(e);
+			res.error('资源解析错误，请检查链接有效性');
 		}
 	});
 

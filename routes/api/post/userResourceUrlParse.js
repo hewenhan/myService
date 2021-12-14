@@ -190,11 +190,12 @@ var parseDouYinResource = async (req, res, retryCount) => {
 		var page = await browser.tabnew();
 		await page.setUrl(req.allParams.urlParse.href);
 		var data = await page.text();
-		console.log(data);
 		browser.exit();
 	} catch (e) {
 		console.log(e);
 		browser.exit();
+		res.error('网页打开错误');
+		return;
 	}
 
 	try {

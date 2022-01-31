@@ -179,7 +179,7 @@ var parseQuanMinKGeResource = (req, res) => {
 	});
 };
 
-var parseDouYinResource = async (req, res, retryCount) => {
+var parseDouYinResourceBak = async (req, res, retryCount) => {
 
 	var browser = await chrome({
 		device: {
@@ -243,109 +243,75 @@ var parseDouYinResource = async (req, res, retryCount) => {
 	}
 };
 
-var parseDouYinResourceBak = (req, res, retryCount) => {
-	var retryCount = retryCount || 0;
-	if (retryCount > 10) {
-		res.error('重试次数过多');
-		return;
-	}
+var parseDouYinResource = (req, res) => {
 	var options = {
 		url: req.allParams.urlParse.href,
+		redirectChain: true,
 		headers: {
-			'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36'
+			'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1'
 		}
 	};
 
-	var currentCookie = cookiejar.getCookiesSync(`http://${req.allParams.urlParse.host}`);
-	if (currentCookie.length != 0) {
-		options.headers.Cookie = '';
-		currentCookie.forEach(cookie => {
-			var cookieJson = cookie.toJSON();
-			options.headers.Cookie += `${cookieJson.key}=${cookieJson.value}; `
-		});
-	}
-
 	reqHttp(options, (err, data, resHeaders, resCode) => {
-		console.log(`//////// REQUEST RECIVE /////////////////////////////////////`);
-		// console.log(`err       : ${err}`);
-		// console.log(`data      : ${data}`);
-		console.log(`resHeaders: ${util.inspect(resHeaders)}`);
-		console.log(`urlParse  : ${util.inspect(req.allParams.urlParse)}`);
-		console.log(`resCode   : ${resCode}`);
-
-		if (resHeaders['set-cookie']) {
-			if (resHeaders['set-cookie'] instanceof Array)
-				cookies = resHeaders['set-cookie'].map(Cookie.parse);
-			else
-				cookies = [Cookie.parse(resHeaders['set-cookie'])];
-			cookies.forEach(cookie => {
-				var cookieJson = cookie.toJSON();
-				cookiejar.setCookieSync(cookie, `http://${cookieJson.domain}`);
-			});
+		if (err) {
+			res.error(err);
+			return;
 		}
 
-		if (resCode == 301 || resCode == 302 || resCode == 303) {
-			if (resHeaders.location[0] == '/') {
-				resHeaders.location = `${req.allParams.urlParse.protocol}//${req.allParams.urlParse.host}${resHeaders.location}`
+		var pathnameParseArr = resHeaders.lastReqOptions.urlParse.pathname.split('/').filter((cell) => {return cell != ''});
+		var videoId = pathnameParseArr[pathnameParseArr.length - 1]
+		var reqApiOptions = {
+			url: `https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids=${videoId}`,
+			headers: {
+				'authority': 'www.iesdouyin.com',
+				'cache-control': 'max-age=0',
+				'sec-ch-ua': '" Not;A Brand";v="99", "Google Chrome";v="97", "Chromium";v="97"',
+				'sec-ch-ua-mobile': '?0',
+				'sec-ch-ua-platform': '"Linux"',
+				'upgrade-insecure-requests': '1',
+				'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36',
+				'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+				'sec-fetch-site': 'none',
+				'sec-fetch-mode': 'navigate',
+				'sec-fetch-user': '?1',
+				'sec-fetch-dest': 'document',
+				'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,hu;q=0.7,und;q=0.6,es;q=0.5'
 			}
-
-			req.allParams.url      = resHeaders.location;
-			req.allParams.urlParse = urlParse.parse(resHeaders.location);
-
-			retryCount++;
-			parseDouYinResource(req, res, retryCount);
-			return;
-		}
-		
-		if (resHeaders['content-length'] < 2000) {
-			console.log(`data      : ${data}`);
-			console.log(`Need Parse`);
-			res.error(`Need Parse`);
-			return;
-		}
-		
-		try {
-
-			var start = false;
-			var success = false;
-
-			var parser = new htmlparser.Parser({
-				onopentag: (tagname, attribs) => {
-					if(tagname === "script" && attribs.id === 'RENDER_DATA' && !success){
-						start = true;
-					}
-				},
-				ontext: (text) => {
-					if (start && !success) {
-						success                          = true;
-						var mediaInfo                    = JSON.parse(decodeURIComponent(text));
-						mediaInfo                        = mediaInfo.C_20.aweme.detail;
-						req.allParams.result.name        = mediaInfo.desc;
-						req.allParams.result.artist      = mediaInfo.authorInfo.nickname;
-						req.allParams.result.resourceUrl = 'https:' + mediaInfo.video.playAddr[0].src;
-						req.allParams.result.resourceUrl = `${req.protocol}://${req.host}/api/userPassProxy?url=${encodeURIComponent(req.allParams.result.resourceUrl)}`;
-					}
-				},
-				onclosetag: (tagname) => {
-					// console.log(catchHtml);
-				}
-			}, {decodeEntities: true});
-			parser.write(data);
-			parser.end();
-
-			if (req.allParams.result.name && req.allParams.result.artist && req.allParams.result.resourceUrl) {
-				req.allParams.result.mimetype = 'video/mp4';
-				insertOrUpdateUserResource(req, res);
+		};
+		reqHttp(reqApiOptions, (err, data, resHeaders, resCode) => {
+			if (err) {
+				res.error(err);
 				return;
 			}
+			if (data.status_code != 0) {
+				res.error(data);
+				return;
+			}
+			var videoInfo = data.item_list[0];
+			req.allParams.result.name        = videoInfo.desc;
+			req.allParams.result.artist      = videoInfo.author.nickname;
+			req.allParams.result.mimetype    = 'video/mp4';
+			req.allParams.result.resourceUrl = videoInfo.video.play_addr.url_list[0];
 
-			console.log(req.allParams.result);
+			var parseVideoUrlOption = {
+				url: req.allParams.result.resourceUrl,
+				headers: {
+					'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36'
+				},
+				redirectChain: true,
+				headersOnly: true
+			};
+			reqHttp(parseVideoUrlOption, (err, data, resHeaders, resCode) => {
+				if (err) {
+					res.error(err);
+					return;
+				}
+				req.allParams.result.resourceUrl = resHeaders.lastReqOptions.urlParse.href;
+				req.allParams.result.resourceUrl = `${req.protocol}://${req.host}/api/userPassProxy?url=${encodeURIComponent(req.allParams.result.resourceUrl)}`;
 
-			throw "Non Resource"
-		} catch (e) {
-			console.log(e);
-			res.error('资源解析错误，请检查链接有效性');
-		}
+				insertOrUpdateUserResource(req, res);
+			});
+		});
 	});
 };
 
@@ -520,7 +486,6 @@ var parseXimalayaResource = (req, res, retryCount) => {
 };
 
 var switchResource = (req, res) => {
-	console.log(req.allParams);
 	req.allParams.result.description = req.allParams.urlParse.href;
 	switch (req.allParams.urlParse.host) {
 		case 'changba.com':

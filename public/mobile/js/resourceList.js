@@ -66,8 +66,33 @@ var deleteResource = (resourceId) => {
 
 var downloadResource = (resourceId) => {
 	var resourceUrlDom = $(`#resourceId_${resourceId} .resourceUrl`);
-	var url = resourceUrlDom.html();
-	window.open(url);
+	var url            = resourceUrlDom.html();
+
+	// window.open(url);
+	// return;
+
+	var suffix         = url.replace(/.+\./, "").toLowerCase();
+
+	if (suffix.length > 10) {
+		suffix = 'unknown';
+	}
+
+	var fileName = $(`#resourceId_${resourceId} .resourceName`).html();
+	fileName     = fileName.replace(/\\|\/|\:|\*|\?|\"|\<|\>|\||\s/g, '').trim().substr(0, 12) + '.' + suffix;
+
+	var a        = document.createElement('a');
+	a.href       = url;
+	a.target     = '_blank';
+	a.download   = 'lkn_' + fileName + '.pdf';
+	document.body.appendChild(a);
+	if (/safari/ig.test(navigator.userAgent)) {
+		setTimeout(() => {
+			a.click();
+			document.body.removeChild(a);
+		}, 500);
+		return;
+	}
+	document.body.removeChild(a);
 };
 
 var getResourceList = (startId) => {

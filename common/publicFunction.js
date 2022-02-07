@@ -212,3 +212,7 @@ this.updateUserLogin = (uid, ip, userAgent, cb) => {
 
 	update(updateUserLoginJson, cb);
 };
+
+this.removeEmoji = (str) => {
+	return str.replace(/\p{Emoji}/gu, '');
+};

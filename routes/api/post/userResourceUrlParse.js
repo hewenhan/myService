@@ -15,8 +15,8 @@ var insertOrUpdateUserResource = (req, res) => {
 		tableName: 'service.user_resource',
 		data: {
 			uid: req.allParams.userInfo.id,
-			filename: req.allParams.result.name.replace(/[\u0800-\uFFFF]/g, ''),
-			artist: req.allParams.result.artist.replace(/[\u0800-\uFFFF]/g, ''),
+			filename: common.removeEmoji(req.allParams.result.name),
+			artist: common.removeEmoji(req.allParams.result.artist),
 			mimetype: req.allParams.result.mimetype,
 			url: req.allParams.result.resourceUrl,
 			md5: 'OTHER STORAGE',
@@ -306,8 +306,8 @@ var parseDouYinResource = (req, res) => {
 					res.error(err);
 					return;
 				}
-				req.allParams.result.resourceUrl = resHeaders.lastReqOptions.urlParse.href;
-				req.allParams.result.resourceUrl = `${req.protocol}://${req.host}/api/userPassProxy?url=${encodeURIComponent(req.allParams.result.resourceUrl)}`;
+				req.allParams.result.resourceUrl      = resHeaders.lastReqOptions.urlParse.href;
+				req.allParams.result.resourceUrlProxy = `${req.protocol}://${req.host}/api/userPassProxy?url=${encodeURIComponent(req.allParams.result.resourceUrl)}`;
 
 				insertOrUpdateUserResource(req, res);
 			});

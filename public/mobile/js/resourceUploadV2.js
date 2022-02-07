@@ -343,7 +343,6 @@ requestApi('requestStsInfo', {}, (err, data) => {
 		region: 'oss-cn-beijing',
 		bucket: 'my-service-static'
 	});
-	console.log(client);
 });
 
 const loadFileFromRemote = (remoteResource) => {
@@ -369,7 +368,8 @@ const loadFileFromRemote = (remoteResource) => {
 		</div>
 	`);	
 
-	loadFromUrl(remoteResource.resourceUrl, (loaded, total) => {
+	var resourceUrl = remoteResource.resourceUrlProxy || remoteResource.resourceUrl;
+	loadFromUrl(resourceUrl, (loaded, total) => {
 		var sizeInfo = convertSize(total);
 		var p = loaded / total;
 		var currentDownloadSize = (p * sizeInfo.size).toFixed(2);

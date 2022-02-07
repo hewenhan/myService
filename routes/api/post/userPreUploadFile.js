@@ -3,7 +3,7 @@ var insertUserResource = (req, res) => {
 		tableName: 'service.user_resource',
 		data: {
 			uid: req.allParams.userInfo.id,
-			filename: req.allParams.fileName,
+			filename: common.removeEmoji(req.allParams.fileName),
 			mimetype: req.allParams.mimeType,
 			url: req.allParams.url,
 			md5: req.allParams.md5,

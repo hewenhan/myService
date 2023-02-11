@@ -32,11 +32,11 @@ module.exports = function (req, res, next) {
 	var content = common.randomStr(10);
 
 	var reciveMsg = `<xml>
-  <ToUserName>${toUser}</ToUserName>
-  <FromUserName>${fromUser}</FromUserName>
+  <ToUserName><![CDATA[${fromUser}]]></ToUserName>
+  <FromUserName><![CDATA[${toUser}]]></FromUserName>
   <CreateTime>${Math.floor(Date.now() / 1000)}</CreateTime>
-  <MsgType>text</MsgType>
-  <Content>确认收到，自动发送：${content}</Content>
+  <MsgType><![CDATA[text]]></MsgType>
+  <Content><![CDATA[确认收到，自动发送：${content}]]></Content>
 </xml>`;
 
 	console.log(reciveMsg);

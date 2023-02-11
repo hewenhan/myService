@@ -31,12 +31,13 @@ module.exports = function (req, res, next) {
 	var fromUser = req.allParams.xml.fromusername[0];
 	var content = common.randomStr(10);
 
-	var reciveMsg = `<xml>
-  <ToUserName><![CDATA[${fromUser}]]></ToUserName>
-  <FromUserName><![CDATA[${toUser}]]></FromUserName>
-  <CreateTime>${Math.floor(Date.now() / 1000)}</CreateTime>
-  <MsgType><![CDATA[text]]></MsgType>
-  <Content><![CDATA[确认收到，自动发送：${content}]]></Content>
+	var reciveMsg = `
+<xml>
+	<ToUserName><![CDATA[${fromUser}]]></ToUserName>
+	<FromUserName><![CDATA[${toUser}]]></FromUserName>
+	<CreateTime>${Math.floor(Date.now() / 1000)}</CreateTime>
+	<MsgType><![CDATA[text]]></MsgType>
+	<Content><![CDATA[确认收到，自动发送：${content}]]></Content>
 </xml>`;
 
 	console.log(reciveMsg);

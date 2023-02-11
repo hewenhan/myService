@@ -39,6 +39,8 @@ module.exports = function (req, res, next) {
   <Content><![CDATA[确认收到，自动发送：${content}]]></Content>
 </xml>`;
 
+	console.log(reciveMsg);
+
 	// res.send('success');
 	res.send(reciveMsg);
 };

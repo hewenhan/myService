@@ -29,7 +29,7 @@ module.exports = function (req, res, next) {
 
 	var toUser = req.allParams.xml.tousername[0];
 	var fromUser = req.allParams.xml.fromusername[0];
-	var content = common.randomString(10);
+	var content = common.randomStr(10);
 
 	var reciveMsg = `<xml>
   <ToUserName><![CDATA[${toUser}]]></ToUserName>

@@ -23,6 +23,7 @@ const openAI = require('../../../lib/openAI')(__config.openAI, redis);
 const checkSeqMsgAndSend = (res, msgObj) => {
 	console.log('checkSeqMsgAndSend!!!!!!!');
 	setTimeout(() => {
+		console.log(res.statusCode);
 		redis.get(msgObj.msgid, (err, reply) => {
 			if (err) {
 				console.log(err);
@@ -37,7 +38,6 @@ const checkSeqMsgAndSend = (res, msgObj) => {
 						<MsgType><![CDATA[text]]></MsgType>
 						<Content><![CDATA[${reply}]]></Content>
 					</xml>`;
-				console.log(res.statusCode);
 				res.send(reciveMsg);
 				return;
 			}

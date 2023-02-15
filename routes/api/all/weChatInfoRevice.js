@@ -29,7 +29,7 @@ const checkSeqMsgAndSend = (res, msgObj) => {
 				console.log(err);
 				return;
 			}
-			if (reply != null) {
+			if (reply != null && reply != '') {
 				var reciveMsg = `
 					<xml>
 						<ToUserName><![CDATA[${msgObj.fromUser}]]></ToUserName>

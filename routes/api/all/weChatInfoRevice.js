@@ -71,6 +71,8 @@ module.exports = function (req, res, next) {
 			console.log(err);
 			return;
 		}
+		console.log('reply');
+		console.log(reply);
 		if (reply != null) {
 			var reciveMsg = `
 				<xml>

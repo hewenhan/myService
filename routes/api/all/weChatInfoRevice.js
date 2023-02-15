@@ -68,7 +68,6 @@ module.exports = function (req, res, next) {
 	};
 
 	console.log(4);
-	console.log(reciveMsg);
 	console.log(5);
 
 	redis.get(msgObj.msgid, (err, reply) => {

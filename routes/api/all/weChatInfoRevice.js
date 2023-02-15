@@ -38,7 +38,11 @@ const checkSeqMsgAndSend = (res, msgObj) => {
 						<MsgType><![CDATA[text]]></MsgType>
 						<Content><![CDATA[${reply}]]></Content>
 					</xml>`;
-				res.send(reciveMsg);
+				try {
+					res.send(reciveMsg);
+				} catch (e) {
+					console.log('bad req');
+				}
 				return;
 			}
 			checkSeqMsgAndSend(res, msgObj);

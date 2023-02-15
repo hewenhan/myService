@@ -73,7 +73,7 @@ module.exports = function (req, res, next) {
 
 	if (msgObj.fromUser == 'oj-kewBhPkAf7H0ACPSQfOB8icFQ') {
 		if (req.allParams.xml.content[0] == 'SET') {
-			var contentText = `当前模型为 ${__config.openAI.modules[__config.openAI.modelIdx]}\n序号为${__config.openAI.modelIdx}，设置请发送命令类似 "SET ${__config.openAI.modelIdx}"。 列表为 ${__config.openAI.modules}`;
+			var contentText = `当前模型为 ${__config.openAI.models[__config.openAI.modelIdx]}\n序号为${__config.openAI.modelIdx}，设置请发送命令类似 "SET ${__config.openAI.modelIdx}"。 列表为 ${__config.openAI.models}`;
 
 			console.log(contentText);
 			var reciveMsg = `

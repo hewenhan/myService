@@ -1,3 +1,5 @@
+const openAI = require('../../../lib/openAI')(__config.openAI, redis);
+
 // {
 // 	signature: '8957524acb8bdd41de6b3da3ec183f77dc7528c9',
 // 	timestamp: '1676090261',
@@ -18,8 +20,31 @@
 // 	}
 //   }
 
+const checkSeqMsgAndSend = (res, msgObj) => {
+	console.log('checkSeqMsgAndSend!!!!!!!');
+	setTimeout(() => {
+		redis.get(msgObj.msgid, (err, reply) => {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			if (reply != null) {
+				var reciveMsg = `
+					<xml>
+						<ToUserName><![CDATA[${msgObj.fromUser}]]></ToUserName>
+						<FromUserName><![CDATA[${msgObj.toUser}]]></FromUserName>
+						<CreateTime>${Math.floor(Date.now() / 1000)}</CreateTime>
+						<MsgType><![CDATA[text]]></MsgType>
+						<Content><![CDATA[${reply}]]></Content>
+					</xml>`;
+				res.send(reciveMsg);
+				return;
+			}
+			checkSeqMsgAndSend(res, msgObj.msgid);
+		});
+	}, 1000);
+};
 module.exports = function (req, res, next) {
-
 	console.log(req.allParams);
 
 	if (req.allParams.echostr != null) {
@@ -27,21 +52,17 @@ module.exports = function (req, res, next) {
 		return;
 	}
 
-	var toUser = req.allParams.xml.tousername[0];
-	var fromUser = req.allParams.xml.fromusername[0];
-	var content = common.randomStr(10);
+	var msgObj = {
+		fromUser: req.allParams.xml.fromusername[0],
+		toUser: req.allParams.xml.tousername[0],
+		msgid: req.allParams.xml.msgid[0],
+		content: ''
+	};
 
-	var reciveMsg = `
-<xml>
-	<ToUserName><![CDATA[${fromUser}]]></ToUserName>
-	<FromUserName><![CDATA[${toUser}]]></FromUserName>
-	<CreateTime>${Math.floor(Date.now() / 1000)}</CreateTime>
-	<MsgType><![CDATA[text]]></MsgType>
-	<Content><![CDATA[确认收到，自动发送：${content}]]></Content>
-</xml>`;
+	openAI.ask(req.allParams.xml.content[0], msgObj.msgid);
+	checkSeqMsgAndSend(res, msgObj);
 
 	console.log(reciveMsg);
 
 	// res.send('success');
-	res.send(reciveMsg);
 };

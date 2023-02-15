@@ -64,10 +64,32 @@ module.exports = function (req, res, next) {
 		content: ''
 	};
 
-	openAI.ask(req.allParams.xml.content[0], msgObj.msgid);
-	checkSeqMsgAndSend(res, msgObj);
-
 	console.log(reciveMsg);
+
+	redis.get(msgObj.msgid, (err, reply) => {
+		if (err) {
+			console.log(err);
+			return;
+		}
+		if (reply != null) {
+			var reciveMsg = `
+				<xml>
+					<ToUserName><![CDATA[${msgObj.fromUser}]]></ToUserName>
+					<FromUserName><![CDATA[${msgObj.toUser}]]></FromUserName>
+					<CreateTime>${Math.floor(Date.now() / 1000)}</CreateTime>
+					<MsgType><![CDATA[text]]></MsgType>
+					<Content><![CDATA[${reply}]]></Content>
+				</xml>`;
+			try {
+				res.send(reciveMsg);
+			} catch (e) {
+				console.log('bad req');
+			}
+			return;
+		}
+		openAI.ask(req.allParams.xml.content[0], msgObj.msgid);
+		checkSeqMsgAndSend(res, msgObj);
+	});
 
 	// res.send('success');
 };

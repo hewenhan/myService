@@ -80,7 +80,7 @@ module.exports = function (req, res, next) {
 		console.log(8);
 		console.log('reply');
 		console.log(reply);
-		if (reply != null) {
+		if (reply != null && reply != '') {
 			var reciveMsg = `
 				<xml>
 					<ToUserName><![CDATA[${msgObj.fromUser}]]></ToUserName>
@@ -96,8 +96,11 @@ module.exports = function (req, res, next) {
 			}
 			return;
 		}
+		if (reply == '') {
+			checkSeqMsgAndSend(res, msgObj);
+		}
+		redis.set(msgObj.msgid, '', 60);
 		openAI.ask(req.allParams.xml.content[0], msgObj.msgid);
-		checkSeqMsgAndSend(res, msgObj);
 	});
 
 	// res.send('success');

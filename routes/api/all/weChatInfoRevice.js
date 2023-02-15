@@ -74,6 +74,8 @@ module.exports = function (req, res, next) {
 	if (msgObj.fromUser == 'oj-kewBhPkAf7H0ACPSQfOB8icFQ') {
 		if (req.allParams.xml.content[0] == 'SET') {
 			var contentText = `当前模型为 ${__config.openAI.modules[__config.openAI.modelIdx]}\n序号为${__config.openAI.modelIdx}，设置请发送命令类似 "SET ${__config.openAI.modelIdx}"。 列表为 ${__config.openAI.modules}`;
+
+			console.log(contentText);
 			var reciveMsg = `
 				<xml>
 					<ToUserName><![CDATA[${msgObj.fromUser}]]></ToUserName>
@@ -82,7 +84,7 @@ module.exports = function (req, res, next) {
 					<MsgType><![CDATA[text]]></MsgType>
 					<Content><![CDATA[${contentText}]]></Content>
 				</xml>`;
-				
+			console.log(reciveMsg);
 			res.send(reciveMsg);
 			return;
 		}

@@ -93,7 +93,7 @@ module.exports = function (req, res, next) {
 
 		var commandArr = req.allParams.xml.content[0].split(' ');
 		if (commandArr[0] == 'SET') {
-			__config.openAI.modelIdx = number(commandArr[1]);
+			__config.openAI.modelIdx = Number(commandArr[1]);
 			var contentText = `设置成功，当前模型为 ${__config.openAI.models[__config.openAI.modelIdx]}`;
 			var reciveMsg = `
 			<xml>

@@ -75,7 +75,7 @@ module.exports = function (req, res, next) {
 		if (req.allParams.xml.content[0] == 'SET') {
 			console.log(__config);
 			var listStr = ``;
-			for (var i in __config.openAI.models) {
+			for (var i = 0; i < __config.openAI.models.legth; i++) {
 				listStr += `${i} ${__config.openAI.models[i]}\n`
 			}
 			var contentText = `当前模型为 ${__config.openAI.models[__config.openAI.modelIdx]}\n序号为${__config.openAI.modelIdx}，设置请发送命令类似 "SET ${__config.openAI.modelIdx}"。 列表为序号对应：\n${listStr}`;

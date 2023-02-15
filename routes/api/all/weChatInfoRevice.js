@@ -71,6 +71,22 @@ module.exports = function (req, res, next) {
 		content: ''
 	};
 
+	if (msgObj.fromUser == 'oj-kewBhPkAf7H0ACPSQfOB8icFQ') {
+		if (req.allParams.xml.content[0] == 'SET') {
+			var contentText = `当前模型为 ${__config.openAI.modules[__config.openAI.moduleIdx]}\n序号为${__config.openAI.moduleIdx}，设置请发送命令 "SET 0" 列表为 ${__config.openAI.modules}`;
+			var reciveMsg = `
+				<xml>
+					<ToUserName><![CDATA[${msgObj.fromUser}]]></ToUserName>
+					<FromUserName><![CDATA[${msgObj.toUser}]]></FromUserName>
+					<CreateTime>${Math.floor(Date.now() / 1000)}</CreateTime>
+					<MsgType><![CDATA[text]]></MsgType>
+					<Content><![CDATA[${contentText}]]></Content>
+				</xml>`;
+			res.send(reciveMsg);
+			return;
+		}
+	}
+
 	redis.get(msgObj.msgid, (err, reply) => {
 		if (err) {
 			console.log(err);

@@ -20,8 +20,15 @@ const openAI = require('../../../lib/openAI')(__config.openAI, redis);
 // 	}
 //   }
 
-const checkSeqMsgAndSend = (res, msgObj) => {
+const checkSeqMsgAndSend = (res, msgObj, count) => {
+	if (count == null) {
+		count = 0;
+	}
+	if (count > 6) {
+		return;
+	}
 	setTimeout(() => {
+		count++;
 		console.log(res.statusCode);
 		redis.get(msgObj.msgid, (err, reply) => {
 			if (err) {
@@ -41,10 +48,11 @@ const checkSeqMsgAndSend = (res, msgObj) => {
 					res.send(reciveMsg);
 				} catch (e) {
 					console.log('bad req');
+					return;
 				}
 				return;
 			}
-			checkSeqMsgAndSend(res, msgObj);
+			checkSeqMsgAndSend(res, msgObj, count);
 		});
 	}, 1000);
 };

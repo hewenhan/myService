@@ -40,7 +40,7 @@ const checkSeqMsgAndSend = (res, msgObj) => {
 				res.send(reciveMsg);
 				return;
 			}
-			checkSeqMsgAndSend(res, msgObj.msgid);
+			checkSeqMsgAndSend(res, msgObj);
 		});
 	}, 1000);
 };

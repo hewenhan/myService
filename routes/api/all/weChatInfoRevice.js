@@ -82,6 +82,7 @@ module.exports = function (req, res, next) {
 					<MsgType><![CDATA[text]]></MsgType>
 					<Content><![CDATA[${contentText}]]></Content>
 				</xml>`;
+				
 			res.send(reciveMsg);
 			return;
 		}

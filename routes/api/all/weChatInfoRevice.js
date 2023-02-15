@@ -94,6 +94,7 @@ module.exports = function (req, res, next) {
 		}
 		if (reply == '') {
 			checkSeqMsgAndSend(res, msgObj);
+			return;
 		}
 		redis.set(msgObj.msgid, '', 60);
 		openAI.ask(req.allParams.xml.content[0], msgObj.msgid);

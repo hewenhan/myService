@@ -38,6 +38,7 @@ const checkSeqMsgAndSend = (res, msgObj) => {
 						<MsgType><![CDATA[text]]></MsgType>
 						<Content><![CDATA[${reply}]]></Content>
 					</xml>`;
+				console.log(reciveMsg);
 				try {
 					res.send(reciveMsg);
 				} catch (e) {

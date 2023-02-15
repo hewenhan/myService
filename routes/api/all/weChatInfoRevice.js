@@ -51,15 +51,12 @@ const checkSeqMsgAndSend = (res, msgObj) => {
 };
 module.exports = function (req, res, next) {
 	console.log(req.allParams);
-	console.log(1);
 
 	if (req.allParams.echostr != null) {
 		res.send(req.allParams.echostr);
-		console.log(2);
 		return;
 	}
 
-	console.log(3);
 	var msgObj = {
 		fromUser: req.allParams.xml.fromusername[0],
 		toUser: req.allParams.xml.tousername[0],
@@ -67,19 +64,11 @@ module.exports = function (req, res, next) {
 		content: ''
 	};
 
-	console.log(4);
-	console.log(5);
-
 	redis.get(msgObj.msgid, (err, reply) => {
-		console.log(6);
 		if (err) {
-			console.log(7);
 			console.log(err);
 			return;
 		}
-		console.log(8);
-		console.log('reply');
-		console.log(reply);
 		if (reply != null && reply != '') {
 			var reciveMsg = `
 				<xml>

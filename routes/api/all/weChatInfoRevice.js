@@ -134,7 +134,7 @@ module.exports = function (req, res, next) {
 			return;
 		}
 		redis.set(msgObj.msgid, '', 60);
-		openAI.ask(req.allParams.xml.content[0], msgObj.msgid);
+		openAI.userAsk(msgObj.toUser, req.allParams.xml.content[0], msgObj.msgid);
 		checkSeqMsgAndSend(res, msgObj);
 	});
 

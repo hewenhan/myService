@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title><%= title %></title>
+	<%- globalHtmlHeadTag %>
+	<script type="text/javascript" src="css/fcEmulator.css"></script>
+	<script type="text/javascript" src="https://static.hewenhan.me/jsnes.min.js"></script>
+	<script type="text/javascript" src="js/fcEmulator.js"></script>
+</head>
+<body>
+	<%- globalHtmlBodyHeadTag %>
+	<div class="content">
+		<div id="tableList" class="tableList">
+			<div class="tableCell" id="gameId_283d4f90413953592199786e63f02999476f1d90ed385588b21e9b28cd01abc2">
+				<div class="tableLine">
+					<div class="tableTitle">游戏名</div>
+					<div class="tableLineCell1">Adventure Island II (USA).nes</div>
+				</div>
+				<div class="tableLine">
+					<div class="tableTitle">加载状态</div>
+					<div class="tableLineCell2">未加载</div>
+					<div class="pointer tableTitle2" onclick="startNesGame('283d4f90413953592199786e63f02999476f1d90ed385588b21e9b28cd01abc2')">开始游戏</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<canvas id="nes-canvas" width="256" height="240" style="width: 100%"/>
+	<%- globalHtmlBodyFootTag %>
+</body>
+</html>
